@@ -1,8 +1,8 @@
 #===============================================================================
 # Mobius' Charge Turn Battle System
 # Author: Mobius XVI
-# Version: 1.0
-# Date: 21 FEB 2015
+# Version: 1.1
+# Date: 07 JUL 2015
 #===============================================================================
 #
 # Introduction:
@@ -17,7 +17,7 @@
 #
 #  - Place this script below all the default scripts but above main.
 #
-#  - Import the included pictures into your project, and place them in
+#  - Import the enemy icon pictures into your project, and place them in
 #    the "pictures" folder.
 #
 #  - The customization section below has additional instructions on 
@@ -34,14 +34,13 @@
 #  Credits/Thanks:
 #    - Mobius XVI, author
 #    - TheRiotInside, for testing/feedback/suggestions
+#    - Mudkicker, for suggesting customizable turn icons
 #
 #  License
-#    - This script is licensed under a Creative Commons Attribution-ShareAlike 4.0 Unported license. 
-#	   A human readable summary is available here: http://creativecommons.org/licenses/by-sa/4.0/
-#	   The full license is availble here: http://creativecommons.org/licenses/by-sa/4.0/legalcode
-#	   In addition, this script is only authorized to be posted to the forums on RPGMakerWeb.com.
-#	   Further, if you do decide to use this script in a commercial product, I'd ask that you 
-#      let me know via a post on those forums or a PM. Thanks.
+#    This script is licensed under the MIT license, so you can use it for both commercial and non-commercial games!
+#    Check the included license file for the full text.
+#    Further, if you do decide to use this script in a commercial product, I'd ask that you 
+#    let me know via a forum post or a PM. Thanks.
 #
 #==============================================================================
 # ** CUSTOMIZATION START
@@ -120,16 +119,52 @@ module Mobius
 		# custom words in the database for HP, SP, etc.
 		ESCAPE_WORD = "Escape"
 		
-		# NEED TO DOCUMENT ALL NEW OPTIONS AND POST THEM TO FORUM!!!!!!!!!!!!!!!!!!
-		USE_ACTOR_PICTURES = true
-		ACTOR_PICTURES_SUFFIX = "_Turn_Order_Icon"
-		USE_ENEMY_PICTURES = false
-		ENEMY_PICTURES_SUFFIX = "_Turn_Order_Icon"
-		MISSING_GRAPHIC_COLOR = Color.new(0, 0, 0)
-		USE_ENEMY_PREFIX = true
-		ENEMY_PREFIX = "A: ,B: ,C: ,D: ,E: ,F: ,G: ,H: "
-		ENEMY_BOSS_PREFIX = "Boss: "
+		# The battle system comes with a collection of turn icons to use. However, you don't 
+		# have to use those if you don't want. As long as you leave the names unchanged, you 
+		# can modify them however you want. But keep in mind that only 32x48 (width x height)
+		# pixels will be shown. But let's say you'd rather have unique icons for each actor
+		# and/or each enemy. Then these options are for you.
 		
+		# Set this option to "true" to enable unique icons for each actor. 
+		USE_ACTOR_PICTURES = false
+		# If you've set the above to true, then you need to place an icon for each actor in
+		# the "Pictures" folder. The names for each picture should be "ActorNameActorSuffix"
+		# You can set the suffix below. The default is "_Turn_Order_Icon". So "Aluxes" icon
+		# would need to be named "Aluxes_Turn_Order_Icon". The icons can be any supported image
+		# format (i.e. png, jpg, etc). Keep in mind that only 32x48 (width x height) pixels will be shown.
+		ACTOR_PICTURES_SUFFIX = "_Turn_Order_Icon"
+		# Set this option to "true" to enable unique icons for each enemy.
+		USE_ENEMY_PICTURES = false
+		# If you've set the above to true, then you need to place an icon for each enemy in
+		# the "Pictures" folder. The names for each picture should be "EnemyNameEnemySuffix"
+		# You can set the suffix below. The default is "_Turn_Order_Icon". So "Ghost" icon
+		# would need to be named "Ghost_Turn_Order_Icon". The icons can be any supported image
+		# format (i.e. png, jpg, etc). Keep in mind that only 32x48 (width x height) pixels will be shown.
+		ENEMY_PICTURES_SUFFIX = "_Turn_Order_Icon"
+		# If any image can't be found, a 32x32 box of the below color will be drawn instead.
+		# You can change the numbers to change the color. The numbers are RGB values.
+		# I recommend you just leave this black, but I realize that might be hard to see 
+		# for some people so you can change it if need be.
+		MISSING_GRAPHIC_COLOR = Color.new(0, 0, 0)
+		
+		# When showing the enemy's name during battle, the battle system can be set to
+		# automatically add a prefix based on the enemy's index. This way the player can 
+		# distinguish between Ghost A and Ghost B for example.
+		# Set this to "true" to enable the prefixes; set this to "false" to disable it.
+		USE_ENEMY_PREFIX = true
+		# If you are using prefixes, you can customize how they are displayed.
+		# Simply place your prefixes, separated by commas, in between the quotes.
+		# Keep in mind that this is very literal, so spaces count.
+		# Also, if you don't have eight different prefixes, then some enemies just
+		# won't get a prefix. 
+		# Lastly, you don't need to worry about this if you've set the above option to false.
+		ENEMY_PREFIX = "A: ,B: ,C: ,D: ,E: ,F: ,G: ,H: "
+		# If you are using prefixes, you can customize how they are displayed.
+		# Any enemy tagged as a "boss" in the "BOSS_LIST" above will get this prefix
+		# instead of a normal prefix. 
+		# Keep in mind that this is very literal, so spaces count.
+		# Lastly, you don't need to worry about this if you've set the above option to false.
+		ENEMY_BOSS_PREFIX = "Boss: "		
 		
 		# Because this battle system is designed to more tactical than the default system, a 
 		# scan skill is basically a necessity to allow you to track an enemy's HP/SP. 
