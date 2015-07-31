@@ -419,8 +419,9 @@ class Game_Enemy < Game_Battler
   #--------------------------------------------------------------------------
   # * Get Name - Changed by Mobius
   #--------------------------------------------------------------------------
+  alias base_name name
   def name
-    base_name = $data_enemies[@enemy_id].name
+    #base_name = $data_enemies[@enemy_id].name - removed
 	if Mobius::Charge_Turn_Battle::USE_ENEMY_PREFIX
 		if @boss
 		  full_name = Mobius::Charge_Turn_Battle::ENEMY_BOSS_PREFIX + base_name
@@ -916,7 +917,7 @@ class Window_TurnOrder < Window_Base
   #--------------------------------------------------------------------------
   def draw_enemy_graphic(enemy, x, y)
 	if Mobius::Charge_Turn_Battle::USE_ENEMY_PICTURES
-		enemy_picture_name = enemy.name + Mobius::Charge_Turn_Battle::ENEMY_PICTURES_SUFFIX
+		enemy_picture_name = enemy.base_name + Mobius::Charge_Turn_Battle::ENEMY_PICTURES_SUFFIX
 		bitmap = RPG::Cache.picture(enemy_picture_name)
 		cw = bitmap.width / 2
 		ch = bitmap.height / 2
