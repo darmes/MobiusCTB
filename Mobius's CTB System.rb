@@ -1,8 +1,8 @@
 #===============================================================================
 # Mobius' Charge Turn Battle System
 # Author: Mobius XVI
-# Version: 1.1
-# Date: 07 JUL 2015
+# Version: 1.2
+# Date: 10 AUG 2015
 #===============================================================================
 #
 # Introduction:
@@ -202,25 +202,16 @@ module Mobius
 		# To enable the "status icons" expansion, set STATUS_ICONS below to "true"
 		#==============================================================================
 		# Set this option to "true" to enable this expansion
-		STATUS_ICONS = false 
-		# This allows you to link your database states with a particular icon.
-		# The icons should be imported into your icons folder.
-		# To link them, place the following in between the curly brackets:
-		# Status_ID => "icon_name"
-		# Separate your entries with a comma. Note that the icon name needs to match the
-		# filename as it appears in your icons folder exactly; however, you may omit the
-		# file extension, i.e. ".png", ".jpeg", etc.
-		STATUS_ICONS_LIST = {
-							# This is an example
-							# 1 => "knockout",
-							# 2 => "stun"
-							} 
-		# This allows you to set a default icon that will be used for any states that you
-		# don't have a specific icon for listed above. 
-		STATUS_ICONS_LIST.default = ""
-		# These aren't used yet, so don't bother with them.
-		STATUS_ICON_SUFFIX = ""
-		STATUS_ICON_PATH = "Graphics/Pictures/"
+		STATUS_ICONS = false 		
+		# If you've set the above to true, then you need to place an icon for each status in
+		# the "Icons" folder by default but this can be changed if desired.
+		# The names for each icon should be "StatusNameStatusSuffix"
+		# You can set the suffix below. The default is "_Status_Icon". So "Blind" icon
+		# would need to be named "Blind_Status_Icon". The icons can be any supported image
+		# format (i.e. png, jpg, etc). Keep in mind that only 24x24 (width x height) pixels will be shown.
+		STATUS_ICON_SUFFIX = "_Status_Icon"
+		# Here you can set the path to the status icons. Note that it is local to the project folder.
+		STATUS_ICON_PATH = "Graphics/Icons/"
 		
 		#==============================================================================
 		# ** BEASTIARY SETTINGS
@@ -589,19 +580,7 @@ class Window_Base < Window
 	#--------------------------------------------------------------------------
 	def draw_actor_state(battler, x, y, width = 125)
 		# create temp array for storing bitmaps
-		icon_bitmaps = []
-		# for every state ID in battler's states array (which is sorted by priority)
-		for id in battler.states
-			# if it should be displayed
-			if $data_states[id].rating >= 1
-				# get associated icon name
-				icon_name = Mobius::Charge_Turn_Battle::STATUS_ICONS_LIST[id]
-				# load icon bitmap
-				bitmap = RPG::Cache.icon(icon_name)
-				# store in temp array
-				icon_bitmaps.push(bitmap)			
-			end
-		end
+		icon_bitmaps = get_status_icon_bitmaps(battler)
 		# draw all bitmaps that fit
 		width_sum = 0
 		icon_bitmaps.each do |bitmap|
@@ -617,9 +596,46 @@ class Window_Base < Window
 			else 
 				break
 			end
-		end
+		end		
 	end
-	
+	#--------------------------------------------------------------------------
+	# * Get Status Icon Bitmaps - Takes a Game_Battler and returns an array of 
+	#   bitmaps for drawing their current statuses
+	#--------------------------------------------------------------------------
+	def get_status_icon_bitmaps(battler)
+		icon_bitmaps = []
+		# for every state ID in battler's states array (which is sorted by priority)
+		for id in battler.states
+			# if it should be displayed
+			if $data_states[id].rating >= 1
+				# load icon bitmap
+				bitmap = get_status_icon_bitmap(id)
+				# store in temp array
+				icon_bitmaps.push(bitmap)			
+			end
+		end
+		return icon_bitmaps
+	end
+	#--------------------------------------------------------------------------
+	# * Get Status Icon Bitmap - Takes a Game_Battler and returns an array of bitmaps
+	#   for drawing their current statuses
+	#--------------------------------------------------------------------------
+	def get_status_icon_bitmap(id)
+		# get associated icon name
+		icon_base_name = $data_states[id].name
+		# get suffix
+		suffix = Mobius::Charge_Turn_Battle::STATUS_ICON_SUFFIX
+		# create filename
+		icon_name = icon_base_name + suffix
+		# load icon bitmap
+		return RPG::Cache.status_icon(icon_name)
+		rescue Errno::ENOENT
+			rect = Rect.new(0,0,24,24)
+			color = Mobius::Charge_Turn_Battle::MISSING_GRAPHIC_COLOR
+			bitmap = Bitmap.new(24,24)
+			bitmap.fill_rect(rect, color)
+			return bitmap
+	end
   end
 	  
 end
@@ -2756,13 +2772,15 @@ end
 #==============================================================================
 # ** RPG::Enemy changes
 #==============================================================================
-class RPG::Enemy
-	alias base_name name
+module RPG
+	class Enemy
+		alias base_name name
+	end		
 end
 #==============================================================================
 # ** RPG::Cache changes
 #==============================================================================
-class RPG::Cache
+module RPG::Cache
 	#--------------------------------------------------------------------------
 	# * Status icon loading from cache
 	#--------------------------------------------------------------------------
