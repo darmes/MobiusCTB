@@ -178,7 +178,7 @@ module Mobius
 		# OPTIONAL: If you would like a pop-up to be displayed when you use the skill for the 
 		# first time, then you can do the following additional steps. Create a common event
 		# called scan, and add a "script" command to it. Inside the script command, put
-		# "Mobius.scan_skill" without quotes. Then simply add the common event to the scan skill
+		# "Mobius.scan_skill_popup" without quotes. Then simply add the common event to the scan skill
 		# you created earlier, and you're done!
 		#==============================================================================
 		
@@ -218,25 +218,58 @@ module Mobius
 		# This allows you to set a default icon that will be used for any states that you
 		# don't have a specific icon for listed above. 
 		STATUS_ICONS_LIST.default = ""
+		# These aren't used yet, so don't bother with them.
+		STATUS_ICON_SUFFIX = ""
+		STATUS_ICON_PATH = "Graphics/Pictures/"
 		
 		#==============================================================================
 		# ** BEASTIARY SETTINGS
 		#------------------------------------------------------------------------------
-		# This expansion is not currently available sorry :-(
+		# The BEASTIARY expansion has two parts - a standalone scene that a player could
+		# use to review information on previous foes, and an expanded info window that
+		# displays during battle similar to FFXIII. To access the standalone scene, 
+		# use the script call "$scene = Scene_Beastiary.new". To access the info window,
+		# you can set a dedicated button below in the INPUT SETTINGS. Note that a player
+		# will have to be selecting an enemy for the button to work.
+		# Currently, the beastiary is tightly tied to the scan skill. So if you haven't
+		# set one up, please review the instructions above on how to do that.
+		# Furthermore, you'll need to add another script call to the scan skill in order
+		# for enemies to show up in the standalone beastiary. Inside the script command,
+		# put "Mobius.scan_skill" without quotes.
+		# For additional setup and configuration, see the below instructions.
 		#==============================================================================
-		BEASTIARY = true #CURRENTLY NOT IMPLEMENTED
+		# Set this option to "true" to enable this expansion
+		BEASTIARY = false 
+		# The standalone beastiary will show a 200x200 sprite of the enemy.
+		# For most small enemies, this is sufficient to display the entire sprite
+		# but not for large enemies. So you can create alternate display sprites.
+		# The names for each sprite should be "EnemyNameSpriteSuffix".
+		# You can set the suffix below. The default is "_Beastiary_Sprite". So "Ghost" sprite
+		# would need to be named "Ghost_Beastiary_Sprite". The icons can be any supported image
+		# format (i.e. png, jpg, etc). Keep in mind that only 200x200 (width x height) pixels will be shown.
+		# Any enemy without a special sprite will use it's normal one, so you only need
+		# to worry about the enemies with big sprites.
 		BEASTIARY_SPRITE_SUFFIX = "_Beastiary_Sprite"
-		#BEASTIARY_SPRITE_PATH = "Graphics/Pictures/"
+		# By default, the script looks for special sprites in the "Pictures" folder.
+		# You can change that by configuring the path below.
+		# Note that the path is local to the project directory.
+		BEASTIARY_SPRITE_PATH = "Graphics/Pictures/"
+		# The beastiary window draws some divider lines which by default are colored 
+		# white. You can change the color to whatever you want by setting the below
+		# numbers to your desired R,G,B values.
 		BEASTIARY_DIVIDER_LINE_COLOR = Color.new(255,255,255)
+		# When naming an enemy's stats, the script will use whatever you have set in
+		# the database, but there is no place in the database for an "EVA" word, so 
+		# you can set it below.
 		BEASTIARY_EVASION_WORD = "EVA"
-		
+		# Here you can configure the descriptors for the various element efficiencies
 		BEASTIARY_ELEMENT_WORD_200  = "Helpless"  # Rank A
 		BEASTIARY_ELEMENT_WORD_150  = "Weak"      # Rank B
 		BEASTIARY_ELEMENT_WORD_100  = "Normal"    # Rank C 
 		BEASTIARY_ELEMENT_WORD_50   = "Resistant" # Rank D 
 		BEASTIARY_ELEMENT_WORD_0    = "Immune"    # Rank E 
 		BEASTIARY_ELEMENT_WORD_M100 = "Absorbs"   # Rank F 
-		
+		# Here you can configure the descriptors for the various status efficiencies
 		BEASTIARY_STATUS_WORD_100   = "Helpless"  # Rank A
 		BEASTIARY_STATUS_WORD_80    = "Weak"      # Rank B
 		BEASTIARY_STATUS_WORD_60    = "Normal"    # Rank C 
@@ -2230,13 +2263,16 @@ class Window_BeastSprite < Window_Base
 	#--------------------------------------------------------------------------
 	def refresh
 		unless @enemy == nil
+			# Clear contents
 			self.contents.clear
-			enemy_bitmap = RPG::Cache.picture(self.get_filename)
+			# Get sprite bitmap
+			enemy_bitmap = RPG::Cache.beastiary_sprite(self.get_filename)
 			rect = Rect.new(x, y, contents.width, contents.height)
+			# Draw sprite
 			draw_bitmap_centered(enemy_bitmap, rect)
 		end
 		return
-		# if filename can't be found, use default battler sprite
+		# If filename can't be found, use default battler sprite
 		rescue Errno::ENOENT
 			enemy_bitmap = RPG::Cache.battler(@enemy.battler_name, 
 											   @enemy.battler_hue)
@@ -2244,7 +2280,7 @@ class Window_BeastSprite < Window_Base
 			draw_bitmap_centered(enemy_bitmap, rect)
 	end
 	#--------------------------------------------------------------------------
-	# * Set Enemy
+	# * Set Enemy - Calls refresh as needed
 	#--------------------------------------------------------------------------
 	def enemy=(new_enemy)
 		if @enemy == new_enemy
@@ -2255,7 +2291,7 @@ class Window_BeastSprite < Window_Base
 		end
 	end
 	#--------------------------------------------------------------------------
-	# * Get Filename
+	# * Get Filename - Returns filename for sprite
 	#--------------------------------------------------------------------------
 	def get_filename
 		return @enemy.base_name + Mobius::Charge_Turn_Battle::BEASTIARY_SPRITE_SUFFIX		 
@@ -2297,12 +2333,14 @@ class Window_BeastDetail < Window_Base
 		refresh		
 	end
 	#--------------------------------------------------------------------------
-	# * make sub windows
+	# * Make Sub Windows - Creates the three sub windows
 	#--------------------------------------------------------------------------
-	def make_sub_windows		
+	def make_sub_windows
+		# Create Windows
 		for i in 1..3
 			@sub_windows.push(Window_BeastSubDetail.new(@enemy, @in_battle, i))
 		end
+		# If already selected, activate first window
 		if @selected
 			@sub_windows[@sub_window_index].active = true
 		end
@@ -2312,13 +2350,17 @@ class Window_BeastDetail < Window_Base
   #--------------------------------------------------------------------------
   def update
     super
+	# Update each sub window
 	@sub_windows.each {|window| window.update}
+	# Input handling
 	if @selected
+		# Move focus left
 		if Input.trigger?(Input::LEFT)
 			@sub_windows[@sub_window_index].active = false
 			@sub_window_index = (@sub_window_index - 1) % 3
 			@sub_windows[@sub_window_index].active = true
 		end
+		# Move focus right
 		if Input.trigger?(Input::RIGHT)
 			@sub_windows[@sub_window_index].active = false
 			@sub_window_index = (@sub_window_index + 1) % 3
@@ -2345,13 +2387,7 @@ class Window_BeastDetail < Window_Base
     self.contents.fill_rect(0, 32, contents.width, 1, color)
 	# Draw divider lines
 	self.contents.fill_rect(203, 32 + 4, 1, 288, color)
-	self.contents.fill_rect(404, 32 + 4, 1, 288, color)
-    # Draw ATK, PDEF, MDEF
-    #draw_stats(0, 32)
-    # Draw elemental strengths/weaknesses
-    #draw_elements(0, 32 * 2)
-    # Draw state strengths/weaknesses
-    #draw_states(contents.width / 4, 32 * 2)    
+	self.contents.fill_rect(404, 32 + 4, 1, 288, color)  
   end
   #--------------------------------------------------------------------------
   # * Dispose
@@ -2361,7 +2397,7 @@ class Window_BeastDetail < Window_Base
 	@sub_windows.each {|window| window.dispose}
   end
   #--------------------------------------------------------------------------
-  # * Set Enemy
+  # * Set Enemy - Calls refresh as needed
   #--------------------------------------------------------------------------
   def enemy=(enemy)
     if @enemy == enemy
@@ -2373,7 +2409,7 @@ class Window_BeastDetail < Window_Base
     end
   end
   #--------------------------------------------------------------------------
-  # * Set selected
+  # * Set selected - Selects this window, thereby activating/deactivating sub windows
   #--------------------------------------------------------------------------
   def selected=(boolean)
 	if @selected = boolean
@@ -2383,7 +2419,7 @@ class Window_BeastDetail < Window_Base
 	end
   end
   #--------------------------------------------------------------------------
-  # * Set visible
+  # * Set visible - Changes visibility for self and sub windows
   #--------------------------------------------------------------------------
   alias old_visible= visible=
   def visible=(boolean)
@@ -2393,146 +2429,7 @@ class Window_BeastDetail < Window_Base
 	else
 		@sub_windows.each {|window| window.visible = false}
 	end
-  end
-  #--------------------------------------------------------------------------
-  # * Draw Stats
-  #--------------------------------------------------------------------------
-  def draw_stats(x, y)
-    draw_actor_parameter(@enemy, x + 0 * contents.width / 3, y, 0) # ATK
-    draw_actor_parameter(@enemy, x + 1 * contents.width / 3, y, 1) # PDEF
-    draw_actor_parameter(@enemy, x + 2 * contents.width / 3, y, 2) # MDEF
-  end
-  #--------------------------------------------------------------------------
-  # * Draw Elements
-  #--------------------------------------------------------------------------
-  def draw_elements(x, y)
-    # Draw group title
-    self.contents.font.color = system_color
-    self.contents.draw_text(x, y, contents.width /  4, 32, "Elements", 0)
-    self.contents.fill_rect(x, y + 26, contents.width / 4 - 10, 1, normal_color)
-    # Draw individual elements
-    for i in 1..6
-      draw_element(i, x, y + i * 32)
-    end
-  end
-  #--------------------------------------------------------------------------
-  # * Draw Element
-  #--------------------------------------------------------------------------
-  def draw_element(element_id, x, y)
-    element_text = element_decode(element_id)
-    element_rank = element_rank_decode(@enemy.element_ranks[element_id])
-    draw_icon(element_text, x, y)
-    #self.contents.font.color = system_color
-    #self.contents.draw_text(x + 24, y, contents.width/3 - 24, 32, element_text)
-    self.contents.font.color = normal_color
-    #self.contents.draw_text(x+24, y, contents.width/3 -24-4, 32,element_rank,2)
-    self.contents.draw_text(x + 24, y, contents.width / 4 - 4, 32, element_rank)
-  end
-  #--------------------------------------------------------------------------
-  # * Element Decode
-  #--------------------------------------------------------------------------
-  def element_decode(element_id)
-    $data_system.elements[element_id]
-=begin
-    case element_id
-    when 1 # Fire
-      return "Fire"
-    when 2 # Ice
-      return "Ice"
-    when 3 # Lightning
-      return "Lightning"
-    when 4 # Water
-      return "Water"
-    when 5 # Earth
-      return "Earth"
-    when 6 # Air
-      return "Air"
-    end
-=end
-  end
-  #--------------------------------------------------------------------------
-  # * Element Rank Decode
-  #--------------------------------------------------------------------------
-  def element_rank_decode(element_rank)
-    case element_rank
-    when 1 # Very Weak = 200%
-      return "Very Weak"
-    when 2 # Weak = 150%
-      return "Weak"
-    when 3 # Normal = 100%
-      return "Normal"
-    when 4 # Resistant = 50%
-      return "Resistant"
-    when 5 # Immune = 0%
-      return "Immune"
-    when 6 # Absorb = -100%
-      return "Absorbs"
-    end
-  end
-  #--------------------------------------------------------------------------
-  # * Draw States
-  #--------------------------------------------------------------------------
-  def draw_states(x, y)
-    # Draw group title
-    self.contents.font.color = system_color
-    self.contents.draw_text(x, y, contents.width /  4, 32, "States", 0)
-    self.contents.fill_rect(x, y + 26, contents.width / 4 - 10, 1, normal_color)
-    column_max = 3
-    # Draw individual states
-=begin
-    for i in 0...20
-      id = i + 1
-      sub_x = x + i % column_max * (contents.width / 4)
-      sub_y = y + 32 + i / column_max * 32
-      draw_state(id, sub_x, sub_y)
-    end
-=end
-    for i in 1..20
-      sub_x = x + i % column_max * (contents.width / 4)
-      sub_y = y + i / column_max * 32
-      draw_state(i, sub_x, sub_y)
-    end
-  end
-  #--------------------------------------------------------------------------
-  # * Draw State
-  #--------------------------------------------------------------------------
-  def draw_state(state_id, x, y)
-    state_text = state_decode(state_id)
-    state_rank = state_rank_decode(@enemy.state_ranks[state_id])
-    #self.contents.font.color = system_color
-    #self.contents.draw_text(x, y, contents.width / 3 - 4, 32, state_text)
-    self.contents.font.color = normal_color
-    #self.contents.draw_text(x, y, contents.width / 3 - 4, 32, state_rank, 2)
-    icon = "Status " + state_text
-    draw_icon(icon, x, y)
-    self.contents.draw_text(x + 24, y, contents.width / 4 - 4, 32, state_rank)
-  end
-  #--------------------------------------------------------------------------
-  # * State Decode
-  #--------------------------------------------------------------------------
-  def state_decode(state_id)
-    $data_states[state_id].name
-  end
-  #--------------------------------------------------------------------------
-  # * State Rank Decode
-  #--------------------------------------------------------------------------
-  def state_rank_decode(state_rank)
-    case state_rank
-    when 1 # Very Weak = 100%
-      return "Very Weak"
-    when 2 # Weak = 80%
-      return "Weak" 
-    when 3 # Normal = 60%
-      return "Normal"
-    when 4 # Resistant = 40%
-      return "Resistant"
-    when 5 # Immune = 20%
-      return "Very Resistant"
-    when 6 # Absorb = 0%
-      return "Immune"
-    end
-  end
-  
+  end  
 end
 
 #==============================================================================
@@ -2546,32 +2443,33 @@ class Window_BeastSubDetail < Window_Selectable
 	#	type - 1, 2, 3 --> 1=stats, 2=elements, 3=states
 	#--------------------------------------------------------------------------
 	def initialize(enemy, in_battle, type)
-		# Configuration values - change these to configure the three windows
+		# Configuration values - change these two to configure the three windows
 		padding = 4
 		overlap = 29
 		# Calculated values - derived from above two
-		w = (640 + (2 * overlap) - (2 * padding)) / 3
-		x1 = padding
-		x2 = padding + w - overlap
-		x3 = padding + (2 * w) - (2 * overlap)
+		w = (640 + (2 * overlap) - (2 * padding)) / 3    # Window Width
+		h = 320 - 32                                     # Window Height
+		x1 = padding                                     # Stat Window x-coordinate
+		x2 = padding + w - overlap                       # Element Window x-coordinate
+		x3 = padding + (2 * w) - (2 * overlap)           # State Window x-coordinate
 		if in_battle
-			y = 4 + 32
+			y = 4 + 32                                   # All Window y-coordinate
 		else
-			y = 4 + 160 + 32
+			y = 4 + 160 + 32                             # All Window y-coordinate
 		end
 		case type
 		when 1 ; x = x1
 		when 2 ; x = x2
 		when 3 ; x = x3
 		end
-		#width = 220
-		h = 320 - 32
+		# Use calculated values to create window
 		super(x, y, w, h)
+		# Initialize variables
 		@enemy = enemy
 		@in_battle = in_battle
 		@type = type
 		@index = 0
-		@item_max = 8
+		@item_max = 0
 		self.active = false
 		self.opacity = 0
 		self.back_opacity = 0
@@ -2582,8 +2480,13 @@ class Window_BeastSubDetail < Window_Selectable
 	# * refresh
 	#--------------------------------------------------------------------------
 	def refresh
-		self.contents.clear
+		# dispose contents
+		if self.contents != nil
+		  self.contents.dispose
+		end
+		# reset index
 		self.index = 0
+		# reset number of items
 		@item_max = 0
 		unless @enemy == nil
 			case @type
@@ -2594,7 +2497,7 @@ class Window_BeastSubDetail < Window_Selectable
 		end
 	end
 	#--------------------------------------------------------------------------
-	# * Set Enemy
+	# * Set Enemy - Calls refresh as needed
 	#--------------------------------------------------------------------------
 	def enemy=(enemy)
 		if @enemy == enemy
@@ -2605,13 +2508,16 @@ class Window_BeastSubDetail < Window_Selectable
 		end
 	end
 	#--------------------------------------------------------------------------
-	# * draw_stats
+	# * Draw Stats - draws an enemy's stats
 	#--------------------------------------------------------------------------
 	def draw_stats
+		# configuration
 		padding = 2
 		@item_max = 10
+		# create bitmap
 		self.contents = Bitmap.new(width - 32, @item_max * 32)
 		w = self.contents.width - (2 * padding)
+		# draw all stats
 		for i in 0..9 
 			draw_enemy_parameter(@enemy, padding, i * 32, w, 32, i)
 		end
@@ -2621,6 +2527,8 @@ class Window_BeastSubDetail < Window_Selectable
 	#     enemy : enemy
 	#     x     : draw spot x-coordinate
 	#     y     : draw spot y-coordinate
+	#     w     : draw spot width
+	#     h     : draw spot height
 	#     type  : parameter type (0-9)
 	#--------------------------------------------------------------------------
 	def draw_enemy_parameter(enemy, x, y, w, h, type)
@@ -2656,35 +2564,49 @@ class Window_BeastSubDetail < Window_Selectable
 		  parameter_name = Mobius::Charge_Turn_Battle::BEASTIARY_EVASION_WORD
 		  parameter_value = enemy.eva
 		end
+		# draw stat name
 		self.contents.font.color = system_color
 		self.contents.draw_text(x, y, w, h, parameter_name)
+		# draw stat value
 		self.contents.font.color = normal_color
 		self.contents.draw_text(x, y, w, h, parameter_value.to_s, 2)
 	end
 	#--------------------------------------------------------------------------
-	# * draw_elements
+	# * Draw Elements - draws an enemy's elemental strengths/weaknesses
 	#--------------------------------------------------------------------------
 	def draw_elements
+		# configuration
 		padding = 2
 		@item_max = $data_system.elements.size - 1
+		# create bitmap
 		self.contents = Bitmap.new(width - 32, @item_max * 32)
+		# draw all elements
 		for i in 1...$data_system.elements.size
 			draw_element(padding, (i - 1) * 32, width - 32 - (2 * padding), 32, i)
 		end
 	end
 	#--------------------------------------------------------------------------
-	# * draw_element
+	# * Draw Element
+	#     x           : draw spot x-coordinate
+	#     y           : draw spot y-coordinate
+	#     w           : draw spot width
+	#     h           : draw spot height
+	#     element_id  : element_id corresponds to database value
 	#--------------------------------------------------------------------------
 	def draw_element(x, y, w, h, element_id)
+		# get element name
 		name = $data_system.elements[element_id]
+		# draw name
 		self.contents.font.color = system_color
 		self.contents.draw_text(x, y, w, h, name, 0)
+		# get element rank
 		element_rank = element_rank_decode(@enemy.element_ranks[element_id])
+		# draw element rank
 		self.contents.font.color = normal_color
 		self.contents.draw_text(x, y, w, h, element_rank, 2)
 	end
 	#--------------------------------------------------------------------------
-	# * Element Rank Decode
+	# * Element Rank Decode - converts integer to string based on customization
 	#--------------------------------------------------------------------------
 	def element_rank_decode(element_rank)
 		case element_rank
@@ -2703,29 +2625,41 @@ class Window_BeastSubDetail < Window_Selectable
 		end
 	end
 	#--------------------------------------------------------------------------
-	# * draw_states
+	# * Draw States - draws an enemy's status strengths/weaknesses
 	#--------------------------------------------------------------------------
 	def draw_states
+		# configuration
 		padding = 2
 		@item_max = $data_states.size - 1
+		# create bitmap
 		self.contents = Bitmap.new(width - 32, @item_max * 32)
+		# draw all states
 		for i in 1...$data_states.size
 			draw_state(padding, (i - 1) * 32, width - 32 - (2 * padding), 32, i)
 		end
 	end
 	#--------------------------------------------------------------------------
-	# * draw_state
+	# * Draw State
+	#     x           : draw spot x-coordinate
+	#     y           : draw spot y-coordinate
+	#     w           : draw spot width
+	#     h           : draw spot height
+	#     state_id    : state_id corresponds to database value
 	#--------------------------------------------------------------------------
 	def draw_state(x, y, w, h, state_id)
+		# get name
 		name = $data_states[state_id].name
+		# draw name
 		self.contents.font.color = system_color
 		self.contents.draw_text(x, y, w, h, name, 0)
+		# get state rank
 		state_rank = state_rank_decode(@enemy.state_ranks[state_id])
+		# draw state name
 		self.contents.font.color = normal_color
 		self.contents.draw_text(x, y, w, h, state_rank, 2)
 	end
 	#--------------------------------------------------------------------------
-	# * State Rank Decode
+	# * State Rank Decode - converts integer to string based on customization
 	#--------------------------------------------------------------------------
 	def state_rank_decode(state_rank)
 		case state_rank
@@ -2785,22 +2719,28 @@ class Scene_Beastiary
   # * update
   #--------------------------------------------------------------------------
   def update
+	# Set enemy in windows
     @Window_BeastDetail.enemy = @Window_BeastList.enemy
 	@Window_BeastSprite.enemy = @Window_BeastList.enemy
+	# Call update
     @Window_BeastList.update
     @Window_BeastDetail.update
 	@Window_BeastSprite.update
+	# Input handling
 	if @Window_BeastDetail.selected
+		# When cancel
 		if Input.trigger?(Input::B)
 			@Window_BeastDetail.selected = false
 			@Window_BeastList.active = true
 		end
 	else
+		# When cancel
 		if Input.trigger?(Input::B)
 		  # Play cancel SE
 		  $game_system.se_play($data_system.cancel_se)
 		  $scene = Scene_Menu.new()
 		end
+		# When enter
 		if Input.trigger?(Input::C)
 			@Window_BeastDetail.selected = true
 			@Window_BeastList.active = false
@@ -2820,32 +2760,25 @@ class RPG::Enemy
 	alias base_name name
 end
 #==============================================================================
-# ** Bitmap changes
+# ** RPG::Cache changes
 #==============================================================================
-=begin
-class Bitmap
-	alias filename_check_initialize initialize
-	
-	def initialize(width, height = nil)
-		if width.is_a?(String) 
-			if Bitmap.exist?(filename)
-				filename_check_initialize(width)
-			else
-				filename_check_initialize(32, 32)
-			end
-		else
-			filename_check_initialize(width, height)
-		end
+class RPG::Cache
+	#--------------------------------------------------------------------------
+	# * Status icon loading from cache
+	#--------------------------------------------------------------------------
+	def self.status_icon(filename)
+		path = Mobius::Charge_Turn_Battle::STATUS_ICON_PATH
+		self.load_bitmap(path, filename)
 	end
-	
-	def Bitmap.exist?(filename)#, path) 
-		#File.exist?(path + filename + ".png") or
-		#File.exist?(path + filename + ".jpg")
-		File.exist?(filename + ".png") or
-		File.exist?(filename + ".jpg")
+	#--------------------------------------------------------------------------
+	# * Beastiary sprite loading from cache
+	#--------------------------------------------------------------------------
+
+	def self.beastiary_sprite(filename)
+		path = Mobius::Charge_Turn_Battle::BEASTIARY_SPRITE_PATH
+		self.load_bitmap(path, filename)
 	end
 end
-=end
 #=============================RGSS CHANGES END=================================
 #==============================================================================
 # ** Mobius
@@ -2861,25 +2794,30 @@ end
 #   method name with "Mobius", ex. "Mobius.example"
 #==============================================================================
 module Mobius
-  #------------------------------------------------------------------------
-  # * Scan Skill - scans an enemy and adds their stats to the beastiary
-  #------------------------------------------------------------------------
-  def self.scan_skill
-    ab = $scene.active_battler
-    ti = ab.current_action.target_index
-    en = $game_troop.enemies[ti]
-    $game_party.scan_list.push(en.id).uniq!
-    name = en.name
-    hp = en.hp ; maxhp = en.maxhp
-    sp = en.sp ; maxsp = en.maxsp
-    atk = en.atk
-    pdef = en.pdef ; mdef = en.mdef
-    txt = "#{name} \nHP: #{hp}/#{maxhp}\n"+
-    "SP: #{sp}/#{maxsp} \nATK: #{atk} \nPDEF: #{pdef}\n"+
-    "MDEF: #{mdef}"
-    $game_temp.message_text = txt
-    Window_Message.new
-  end  
+	#------------------------------------------------------------------------
+	# * Scan Skill - scans an enemy and adds their stats to the beastiary
+	#------------------------------------------------------------------------
+	def self.scan_skill
+		$game_party.scan_list.push(en.id).uniq!
+	end
+	#------------------------------------------------------------------------
+	# * Scan Skill Popup - scans an enemy creates a pop-up window
+	#------------------------------------------------------------------------
+	def self.scan_skill_popup
+		ab = $scene.active_battler
+		ti = ab.current_action.target_index
+		en = $game_troop.enemies[ti]
+		name = en.name
+		hp = en.hp ; maxhp = en.maxhp
+		sp = en.sp ; maxsp = en.maxsp
+		atk = en.atk
+		pdef = en.pdef ; mdef = en.mdef
+		txt = "#{name} \nHP: #{hp}/#{maxhp}\n"+
+		"SP: #{sp}/#{maxsp} \nATK: #{atk} \nPDEF: #{pdef}\n"+
+		"MDEF: #{mdef}"
+		$game_temp.message_text = txt
+		Window_Message.new
+	end
 
 end # Module End
 
