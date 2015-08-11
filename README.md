@@ -6,7 +6,8 @@ http://forums.rpgmakerweb.com/index.php?/topic/37195-charge-turn-battle-ctb-syst
  
 Release Notes  
 v. 1.0    Initial Release  
-v. 1.1    Customizable Turn Icons  
+v. 1.1    Customizable Turn Icons
+v. 1.2    Beastiary Expansion Added  
  
 Introduction  
 This script overhauls the default battle system and replaces it with a "CTB" system similar to Final Fantasy Tactics and Final Fantasy X. 
@@ -21,7 +22,8 @@ Features
 - Can customize turn icons on a per actor or per enemy basis. 
 - Customize the "escape" term. 
 - Built-in "scan" skill that's easy to set up and use. 
-- Optional expansion to add icons for states, removing the boring state text. 
+- Optional expansion to add icons for states, removing the boring state text.
+- Optional expansion to add a beastiary 
  
 How to Use  
 Download the zip file. Import the EnemyIcons pictures into your project into the "pictures" folder. 
