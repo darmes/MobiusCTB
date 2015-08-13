@@ -6,7 +6,7 @@ http://forums.rpgmakerweb.com/index.php?/topic/37195-charge-turn-battle-ctb-syst
  
 Release Notes  
 v. 1.0    Initial Release  
-v. 1.1    Customizable Turn Icons
+v. 1.1    Customizable Turn Icons  
 v. 1.2    Beastiary Expansion Added  
  
 Introduction  
