@@ -298,6 +298,18 @@ end
 #  This section runs a check on all customization options to ensure that
 #  they are valid.
 #==============================================================================
+module Mobius
+	module Charge_Turn_Battle
+		def self.mobius_data_check(constant_string)
+			eval(constant_string)
+			return
+			rescue
+				print("Option #{constant_string} for #{self} is not valid")
+				raise
+		end
+		self.constants.each {|constant_string| self.mobius_data_check(constant_string) }
+	end
+end
 
 #==============================================================================
 # ** Game_Battler (part 1)
