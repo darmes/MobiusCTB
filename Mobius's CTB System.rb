@@ -113,7 +113,7 @@ module Mobius
 		# displayed as well as the icon shown for them in the turn order window.
 		# To set this up, all you need to do is list all of the enemies' IDs, separated by commas,
 		# inside of the square brackets.
-		BOSS_LIST = []	
+		BOSS_LIST = [23]	
 				
 		# This option allows you to set the display word for escape similar to how you can set
 		# custom words in the database for HP, SP, etc.
@@ -174,7 +174,7 @@ module Mobius
 		# Once you've done that, set this option to the ID of the scan state that you created. 
 		# Then whenever an enemy has the scan state applied, you'll be able to see their HP/SP
 		# when targeting them.
-		SCAN_STATE_ID = 0
+		SCAN_STATE_ID = 17
 		# OPTIONAL: If you would like a pop-up to be displayed when you use the skill for the 
 		# first time, then you can do the following additional steps. Create a common event
 		# called scan, and add a "script" command to it. Inside the script command, put
@@ -202,14 +202,14 @@ module Mobius
 		# To enable the "status icons" expansion, set STATUS_ICONS below to "true"
 		#==============================================================================
 		# Set this option to "true" to enable this expansion
-		STATUS_ICONS = false 		
+		STATUS_ICONS = true 		
 		# If you've set the above to true, then you need to place an icon for each status in
 		# the "Icons" folder by default but this can be changed if desired.
 		# The names for each icon should be "StatusNameStatusSuffix"
 		# You can set the suffix below. The default is "_Status_Icon". So "Blind" icon
 		# would need to be named "Blind_Status_Icon". The icons can be any supported image
 		# format (i.e. png, jpg, etc). Keep in mind that only 24x24 (width x height) pixels will be shown.
-		STATUS_ICON_SUFFIX = "_Status_Icon"
+		STATUS_ICON_SUFFIX = ""
 		# Here you can set the path to the status icons. Note that it is local to the project folder.
 		STATUS_ICON_PATH = "Graphics/Icons/"
 		
@@ -230,7 +230,7 @@ module Mobius
 		# For additional setup and configuration, see the below instructions.
 		#==============================================================================
 		# Set this option to "true" to enable this expansion
-		BEASTIARY = false 
+		BEASTIARY = true 
 		# The standalone beastiary will show a 200x200 sprite of the enemy.
 		# For most small enemies, this is sufficient to display the entire sprite
 		# but not for large enemies. So you can create alternate display sprites.
@@ -2816,6 +2816,9 @@ module Mobius
 	# * Scan Skill - scans an enemy and adds their stats to the beastiary
 	#------------------------------------------------------------------------
 	def self.scan_skill
+		ab = $scene.active_battler
+		ti = ab.current_action.target_index
+		en = $game_troop.enemies[ti]
 		$game_party.scan_list.push(en.id).uniq!
 	end
 	#------------------------------------------------------------------------
