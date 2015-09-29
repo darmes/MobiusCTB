@@ -2816,6 +2816,9 @@ module Mobius
 	# * Scan Skill - scans an enemy and adds their stats to the beastiary
 	#------------------------------------------------------------------------
 	def self.scan_skill
+		ab = $scene.active_battler
+		ti = ab.current_action.target_index
+		en = $game_troop.enemies[ti]
 		$game_party.scan_list.push(en.id).uniq!
 	end
 	#------------------------------------------------------------------------
