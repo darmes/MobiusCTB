@@ -366,22 +366,22 @@ class Game_Battler
     case @current_action.kind
     #when basic ( attack / defend / escape / nothing )
     when 0
-		case @current_action.basic
-		# when attack
-		when 0
-			#get speed factor from hash: WEAPON_SPEED_FACTORS
-			spd = Mobius::Charge_Turn_Battle::WEAPON_SPEED_FACTORS[@weapon_id]
-			return spd
-		# when defend
-		when 1
-			return Mobius::Charge_Turn_Battle::DEFEND_SPEED_FACTOR
-		# when escape
-		when 2
-			return Mobius::Charge_Turn_Battle::ESCAPE_SPEED_FACTOR
-		# when nothing
-		when 3
-			return Mobius::Charge_Turn_Battle::NOTHING_SPEED_FACTOR
-		end
+			case @current_action.basic
+			# when attack
+			when 0
+				#get speed factor from hash: WEAPON_SPEED_FACTORS
+				spd = Mobius::Charge_Turn_Battle::WEAPON_SPEED_FACTORS[@weapon_id]
+				return spd
+			# when defend
+			when 1
+				return Mobius::Charge_Turn_Battle::DEFEND_SPEED_FACTOR
+			# when escape
+			when 2
+				return Mobius::Charge_Turn_Battle::ESCAPE_SPEED_FACTOR
+			# when nothing
+			when 3
+				return Mobius::Charge_Turn_Battle::NOTHING_SPEED_FACTOR
+			end
     #when skill
     when 1
       #get skill_id
@@ -461,7 +461,7 @@ class Game_Enemy < Game_Battler
   #--------------------------------------------------------------------------
   alias mobius_initialize initialize
   def initialize(troop_id, member_index)
-	mobius_initialize(troop_id, member_index)
+		mobius_initialize(troop_id, member_index)
     @boss = Mobius::Charge_Turn_Battle::BOSS_LIST.include?(id)
   end
   #--------------------------------------------------------------------------
