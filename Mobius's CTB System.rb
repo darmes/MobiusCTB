@@ -396,48 +396,6 @@ class Game_Battler
 end
 
 #==============================================================================
-# ** Game_BattleAction
-#------------------------------------------------------------------------------
-#  This class handles actions in battle. It's used within the Game_Battler 
-#  class.
-#==============================================================================
-
-class Game_BattleAction
-  #--------------------------------------------------------------------------
-  # * Action Name -- Mobius Added
-  #       Returns string corresponding to action kind
-  #--------------------------------------------------------------------------
-  def action_name
-    case @kind
-    #when basic
-    when 0
-      #determine type of basic
-      case @basic
-      #when attack
-      when 0
-        return "Attack"
-      #when defend
-      when 1
-        return "Defend"
-      #when escape
-      when 2
-        return "Escape"
-      #when nothing
-      when 3
-        return "Nothing"
-      end
-    #when skill
-    when 1
-      return $data_skills[@skill_id].name unless $data_skills[@skill_id] == nil
-    #when item
-    when 2
-      return $data_items[@item_id].name unless $data_items[@item_id] == nil
-    end
-    return "???"
-  end
-end
-
-#==============================================================================
 # ** Game_Enemy
 #------------------------------------------------------------------------------
 #  This class handles enemies. It's used within the Game_Troop class
