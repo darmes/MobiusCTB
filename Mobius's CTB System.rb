@@ -670,7 +670,7 @@ end
 #==============================================================================
 # ** Window_TurnOrder
 #------------------------------------------------------------------------------
-#  This window displays the current turn order during battle  
+#  This window displays the current turn order during battle
 #  The window can be scrolled during the command phase
 #==============================================================================
 class Window_TurnOrder < Window_Base
@@ -893,12 +893,11 @@ class Window_TurnOrder < Window_Base
 end
 
 #==============================================================================
-# ** Arrow_All_Enemy
+# ** Arrow_All_Base
 #------------------------------------------------------------------------------
-#  This class creates and manages arrow cursors to choose all enemies. 
+#  This class creates and manages arrow cursors to choose multiple battlers
 #==============================================================================
-
-class Arrow_All_Enemy 
+class Arrow_All_Base
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
@@ -909,41 +908,31 @@ class Arrow_All_Enemy
   #--------------------------------------------------------------------------
   def initialize(viewport)
     @viewport = viewport
-  @help_window = nil
-    @enemies = []
+    @help_window = nil
+    @battlers = []
     @arrows = []
-    make_enemy_list
-    make_helper_arrows
   end
   #--------------------------------------------------------------------------
   # * Frame Update
   #--------------------------------------------------------------------------
   def update
     # Set sprite coordinates
-    unless @enemies == [] or @enemies == nil
+    unless @battlers == [] or @battlers == nil
       for arrow in @arrows
         arrow.update
       end
     end
   end
   #--------------------------------------------------------------------------
-  # * Make Enemy List
-  #--------------------------------------------------------------------------
-  def make_enemy_list
-    for enemy in $game_troop.enemies
-      @enemies.push(enemy) if enemy.exist?
-    end
-  end
-  #--------------------------------------------------------------------------
   # * Make Helper Arrows
   #--------------------------------------------------------------------------
   def make_helper_arrows
-    for i in 0...@enemies.size
-    @arrows.push(Arrow_Base.new(@viewport))
+    for i in 0...@battlers.size
+      @arrows.push(Arrow_Base.new(@viewport))
       arrow = @arrows[i]
-      enemy = @enemies[i]
-      arrow.x = enemy.screen_x
-      arrow.y = enemy.screen_y
+      battler = @battlers[i]
+      arrow.x = battler.screen_x
+      arrow.y = battler.screen_y
     end  
   end
   #--------------------------------------------------------------------------
@@ -952,7 +941,6 @@ class Arrow_All_Enemy
   #--------------------------------------------------------------------------
   def help_window=(help_window)
     @help_window = help_window
-    # Update help text (update_help is defined by the subclasses)
     if @help_window != nil
       update_help
     end
@@ -961,7 +949,6 @@ class Arrow_All_Enemy
   # * Help Text Update
   #--------------------------------------------------------------------------
   def update_help
-    # Display enemy name and state in the help window
     @help_window.set_text("All", 1)
   end
   #--------------------------------------------------------------------------
@@ -975,83 +962,51 @@ class Arrow_All_Enemy
 end
 
 #==============================================================================
-# ** Arrow_All_Actor
+# ** Arrow_All_Enemy
 #------------------------------------------------------------------------------
-#  This class creates and manages arrow cursors to choose all actors.
+#  This class creates and manages arrow cursors to choose all enemies.
 #==============================================================================
-
-class Arrow_All_Actor 
-  #--------------------------------------------------------------------------
-  # * Public Instance Variables
-  #--------------------------------------------------------------------------
-  attr_reader   :help_window              # help window
+class Arrow_All_Enemy < Arrow_All_Base
   #--------------------------------------------------------------------------
   # * Object Initialization
   #     viewport : viewport
   #--------------------------------------------------------------------------
   def initialize(viewport)
-  @viewport = viewport
-  @help_window = nil
-    @actors = []
-    @arrows = []
-    make_actor_list
+    super(viewport)
+    make_enemy_list
     make_helper_arrows
   end
   #--------------------------------------------------------------------------
-  # * Frame Update
+  # * Make Enemy List
   #--------------------------------------------------------------------------
-  def update
-    # Set sprite coordinates
-    unless @actors == [] or @actors == nil
-      for arrow in @arrows
-        arrow.update
-      end
+  def make_enemy_list
+    for enemy in $game_troop.enemies
+      @battlers.push(enemy) if enemy.exist?
     end
+  end
+end
+
+#==============================================================================
+# ** Arrow_All_Actor
+#------------------------------------------------------------------------------
+#  This class creates and manages arrow cursors to choose all actors.
+#==============================================================================
+class Arrow_All_Actor < Arrow_All_Base
+  #--------------------------------------------------------------------------
+  # * Object Initialization
+  #     viewport : viewport
+  #--------------------------------------------------------------------------
+  def initialize(viewport)
+    super(viewport)
+    make_actor_list
+    make_helper_arrows
   end
   #--------------------------------------------------------------------------
   # * Make Actor List
   #--------------------------------------------------------------------------
   def make_actor_list
     for actor in $game_party.actors
-      @actors.push(actor) if actor.exist?
-    end
-  end
-  #--------------------------------------------------------------------------
-  # * Make Helper Arrows
-  #--------------------------------------------------------------------------
-  def make_helper_arrows
-    for i in 0...@actors.size
-    @arrows.push(Arrow_Base.new(@viewport))
-      arrow = @arrows[i]
-      actor = @actors[i]
-      arrow.x = actor.screen_x
-      arrow.y = actor.screen_y
-    end  
-  end
-  #--------------------------------------------------------------------------
-  # * Set Help Window
-  #     help_window : new help window
-  #--------------------------------------------------------------------------
-  def help_window=(help_window)
-    @help_window = help_window
-    # Update help text (update_help is defined by the subclasses)
-    if @help_window != nil
-      update_help
-    end
-  end
-  #--------------------------------------------------------------------------
-  # * Help Text Update
-  #--------------------------------------------------------------------------
-  def update_help
-    # Display enemy name and state in the help window
-    @help_window.set_text("All", 1)
-  end
-  #--------------------------------------------------------------------------
-  # * Dispose
-  #--------------------------------------------------------------------------
-  def dispose
-    for arrow in @arrows
-      arrow.dispose
+      @battlers.push(actor) if actor.exist?
     end
   end
 end
