@@ -320,9 +320,9 @@ class Game_Battler
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
-  alias mobius_game_battler_initialize initialize
+  alias mobius_ctb_initialize initialize
   def initialize
-    mobius_game_battler_initialize
+    mobius_ctb_initialize
     @charge_gauge = 0 
     @charge_gauge_dummy = 0 
   end
@@ -404,52 +404,42 @@ end
 #==============================================================================
 # ** Game_Enemy
 #------------------------------------------------------------------------------
-#  This class handles enemies. It's used within the Game_Troop class
-#  ($game_troop).
+#  Add one new concept to the Game_Enemy class
+#    @boss
+#      This represents if an enemy should be treated as a boss. 
+#      This affects certain display elements like prefixing the name with "Boss:"
 #==============================================================================
-
 class Game_Enemy < Game_Battler
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
-    attr_reader   :boss            # Boss
+    attr_reader   :boss  # Boss
   #--------------------------------------------------------------------------
   # * Object Initialization
   #     troop_id     : troop ID
   #     member_index : troop member index
   #--------------------------------------------------------------------------
-  alias mobius_initialize initialize
+  alias mobius_ctb_initialize initialize
   def initialize(troop_id, member_index)
-    mobius_initialize(troop_id, member_index)
+    mobius_ctb_initialize(troop_id, member_index)
     @boss = Mobius::Charge_Turn_Battle::BOSS_LIST.include?(id)
   end
   #--------------------------------------------------------------------------
-  # * Get Name - Changed by Mobius
+  # * Get Name - May return a prefixed base_name
   #--------------------------------------------------------------------------
   alias base_name name
   def name
-    #base_name = $data_enemies[@enemy_id].name - removed
-  if Mobius::Charge_Turn_Battle::USE_ENEMY_PREFIX
-    if @boss
-      full_name = Mobius::Charge_Turn_Battle::ENEMY_BOSS_PREFIX + base_name
+    if Mobius::Charge_Turn_Battle::USE_ENEMY_PREFIX
+      if @boss
+        return Mobius::Charge_Turn_Battle::ENEMY_BOSS_PREFIX + base_name
+      else
+        prefix_array = Mobius::Charge_Turn_Battle::ENEMY_PREFIX.split(",")
+        prefix = prefix_array[@member_index].to_s #convert to string in case it's nil
+        return prefix + base_name
+      end
     else
-      #temp_str = Mobius::Charge_Turn_Battle::ENEMY_PREFIX - OLD
-      #letter = temp_str[@member_index, 1]
-      #full_name = letter + ": " + base_name
-      prefix_array = Mobius::Charge_Turn_Battle::ENEMY_PREFIX.split(",")
-      prefix = prefix_array[@member_index].to_s #convert to string in case it's nil
-      full_name = prefix + base_name
+      return base_name
     end
-  else
-    full_name = base_name
-  end
-    return full_name
-  end
-  #--------------------------------------------------------------------------
-  # * Get Element Effectiveness
-  #--------------------------------------------------------------------------
-  def element_ranks
-    return $data_enemies[@enemy_id].element_ranks
   end
 end
 
@@ -2160,6 +2150,22 @@ class Scene_Battle
 end
 
 #===========================BEASTIARY EXPANSION================================
+#==============================================================================
+# ** Game_Enemy
+#------------------------------------------------------------------------------
+#  Add one new concept to the Game_Enemy class
+#    element_ranks
+#      This lets us easily look up an enemy's element affinities
+#==============================================================================
+class Game_Enemy < Game_Battler
+  #--------------------------------------------------------------------------
+  # * Get Element Effectiveness
+  #--------------------------------------------------------------------------
+  def element_ranks
+    return $data_enemies[@enemy_id].element_ranks
+  end
+end
+
 #==============================================================================
 # ** Window_BeastList
 #------------------------------------------------------------------------------
