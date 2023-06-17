@@ -482,8 +482,7 @@ end
 #==============================================================================
 # ** Game_Party
 #------------------------------------------------------------------------------
-#  This class handles the party. It includes information on amount of gold 
-#  and items. Refer to "$game_party" for the instance of this class.
+#  Add charge gauge clearing
 #==============================================================================
 class Game_Party
   #--------------------------------------------------------------------------
@@ -503,12 +502,11 @@ end
 #==============================================================================
 # ** Window_Base
 #------------------------------------------------------------------------------
-#  This class is for all in-game windows.
+#  Adds three utility functions to Window_Base
 #==============================================================================
-
 class Window_Base < Window
   #--------------------------------------------------------------------------
-  # * Draw Name
+  # * Draws a bitmap centered in a rect
   #     bitmap : bitmap to draw
   #     rect   : rectangle to center bitmap in
   #--------------------------------------------------------------------------
@@ -518,10 +516,11 @@ class Window_Base < Window
     self.contents.blt(draw_x, draw_y, bitmap, bitmap.rect)    
   end
   #--------------------------------------------------------------------------
-  # * Draw Name
+  # * Draw Actor Name - Adds width parameter
   #     actor : actor
   #     x     : draw spot x-coordinate
   #     y     : draw spot y-coordinate
+  #     width : text width for the name (defaults to 120)
   #--------------------------------------------------------------------------
   def draw_actor_name(actor, x, y, width = 120)
     self.contents.font.color = normal_color
@@ -532,150 +531,35 @@ class Window_Base < Window
   #     icon_name : filename of the icon ("String")
   #     x         : draw spot x-coordinate
   #     y         : draw spot y-coordinate
-  #     MOBIUS ADDED
   #--------------------------------------------------------------------------
   def draw_icon(icon_name, x, y)
     bitmap = RPG::Cache.icon(icon_name)
     src_rect = Rect.new(0, 0, 24, 24)
     self.contents.blt(x, y, bitmap, src_rect)
   end
-  
-  # If STATUS_ICONS expansion has been selected, run this code
-  if Mobius::Charge_Turn_Battle::STATUS_ICONS
-  #--------------------------------------------------------------------------
-  # * Draw State
-  #     battler : battler
-  #     x       : draw spot x-coordinate
-  #     y       : draw spot y-coordinate
-  #     width   : draw spot width
-  # This version will draw icons for the statuses rather than text
-  #--------------------------------------------------------------------------
-  def draw_actor_state(battler, x, y, width = 125)
-    # create temp array for storing bitmaps
-    icon_bitmaps = get_status_icon_bitmaps(battler)
-    # draw all bitmaps that fit
-    width_sum = 0
-    icon_bitmaps.each do |bitmap|
-      # draw icon centered in height but as wide as it is
-      w = bitmap.width 
-      ch = bitmap.height / 2
-      src_rect = Rect.new(0, ch - 16, w, 32)
-      # only draw next icon if it'll fit
-      if (width_sum + w) <= width
-        self.contents.blt(x + width_sum, y, bitmap, src_rect)
-        # add padding of 1 pixel to separate icons
-        width_sum += (w + 1)
-      else 
-        break
-      end
-    end    
-  end
-  #--------------------------------------------------------------------------
-  # * Get Status Icon Bitmaps - Takes a Game_Battler and returns an array of 
-  #   bitmaps for drawing their current statuses
-  #--------------------------------------------------------------------------
-  def get_status_icon_bitmaps(battler)
-    icon_bitmaps = []
-    # for every state ID in battler's states array (which is sorted by priority)
-    for id in battler.states
-      # if it should be displayed
-      if $data_states[id].rating >= 1
-        # load icon bitmap
-        bitmap = get_status_icon_bitmap(id)
-        # store in temp array
-        icon_bitmaps.push(bitmap)      
-      end
-    end
-    return icon_bitmaps
-  end
-  #--------------------------------------------------------------------------
-  # * Get Status Icon Bitmap - Takes a Game_Battler and returns an array of bitmaps
-  #   for drawing their current statuses
-  #--------------------------------------------------------------------------
-  def get_status_icon_bitmap(id)
-    # get associated icon name
-    icon_base_name = $data_states[id].name
-    # get suffix
-    suffix = Mobius::Charge_Turn_Battle::STATUS_ICON_SUFFIX
-    # create filename
-    icon_name = icon_base_name + suffix
-    # load icon bitmap
-    return RPG::Cache.status_icon(icon_name)
-    rescue Errno::ENOENT
-      rect = Rect.new(0,0,24,24)
-      color = Mobius::Charge_Turn_Battle::MISSING_GRAPHIC_COLOR
-      bitmap = Bitmap.new(24,24)
-      bitmap.fill_rect(rect, color)
-      return bitmap
-  end
-  end
-    
+
 end
 
 #==============================================================================
 # ** Window_Help
 #------------------------------------------------------------------------------
-#  This window shows skill and item explanations along with actor status.
+#  Updates the set_enemy method to display scanned enemies
 #==============================================================================
-
 class Window_Help < Window_Base
-  # If STATUS_ICONS expansion has been selected, run this code
-  if Mobius::Charge_Turn_Battle::STATUS_ICONS
-    #--------------------------------------------------------------------------
-    # * Set Enemy
-    #     enemy : name and status displaying enemy
-    #--------------------------------------------------------------------------
-    def set_enemy(enemy)
-      self.contents.clear
-      @actor = nil
-      @text = nil
-      self.visible = true
-      # If enemy has been scanned 
-      if enemy.state?(Mobius::Charge_Turn_Battle::SCAN_STATE_ID)
-        # treat enemy as actor
-        draw_actor_name(enemy, 4, 0)
-        draw_actor_state(enemy, 140, 0)
-        draw_actor_hp(enemy, 284, 0)
-        draw_actor_sp(enemy, 460, 0)
-      elsif enemy.states.any? { |id| $data_states[id].rating >= 1 }
-        # treat enemy as mostly actor
-        self.contents.clear
-        draw_actor_name(enemy, 140, 0, 120)
-        draw_actor_state(enemy, 344, 0, 120)          
-      else
-        # draw only name
-        text = enemy.name 
-        set_text(text, 1)      
-      end
+  #--------------------------------------------------------------------------
+  # * Set Enemy
+  #     enemy : name and status displaying enemy
+  #--------------------------------------------------------------------------
+  alias mobius_ctb_set_enemy set_enemy
+  def set_enemy(enemy)
+    # If enemy has been scanned
+    if enemy.state?(Mobius::Charge_Turn_Battle::SCAN_STATE_ID)
+      # treat enemy as actor
+      set_actor(enemy)
+    else
+      # treat as enemy
+      mobius_ctb_set_enemy(enemy)
     end
-  # else run this code
-  else
-    #--------------------------------------------------------------------------
-    # * Set Enemy
-    #     enemy : name and status displaying enemy
-    #--------------------------------------------------------------------------
-    def set_enemy(enemy)
-      # If enemy has been scanned -- Mobius added
-      if enemy.state?(Mobius::Charge_Turn_Battle::SCAN_STATE_ID)
-        # treat enemy as actor
-        self.contents.clear
-        draw_actor_name(enemy, 4, 0)
-        draw_actor_state(enemy, 140, 0)
-        draw_actor_hp(enemy, 284, 0)
-        draw_actor_sp(enemy, 460, 0)
-        @actor = nil
-        @text = nil
-        self.visible = true
-      else
-        # treat as enemy
-        text = enemy.name 
-        state_text = make_battler_state_text(enemy, 112, false)
-        if state_text != ""
-        text += "  " + state_text
-        end
-        set_text(text, 1)
-      end
-    end  
   end
 end
 
@@ -2237,6 +2121,114 @@ module Mobius
 
 end
 #==============================SCAN SKILL END==================================
+
+
+#===========================STATUS ICONS EXPANSION=============================
+if Mobius::Charge_Turn_Battle::STATUS_ICONS
+#==============================================================================
+# ** Window_Base
+#------------------------------------------------------------------------------
+#  Overwrites the draw_actor_state method
+#==============================================================================
+class Window_Base < Window
+  #--------------------------------------------------------------------------
+  # * Draw State
+  #     battler : battler
+  #     x       : draw spot x-coordinate
+  #     y       : draw spot y-coordinate
+  #     width   : draw spot width
+  # This version will draw icons for the statuses rather than text
+  #--------------------------------------------------------------------------
+  def draw_actor_state(battler, x, y, width = 125)
+    # create temp array for storing bitmaps
+    icon_bitmaps = get_status_icon_bitmaps(battler)
+    # draw all bitmaps that fit
+    width_sum = 0
+    icon_bitmaps.each do |bitmap|
+      # draw icon centered in height but as wide as it is
+      w = bitmap.width 
+      ch = bitmap.height / 2
+      src_rect = Rect.new(0, ch - 16, w, 32)
+      # only draw next icon if it'll fit
+      if (width_sum + w) <= width
+        self.contents.blt(x + width_sum, y, bitmap, src_rect)
+        # add padding of 1 pixel to separate icons
+        width_sum += (w + 1)
+      else 
+        break
+      end
+    end    
+  end
+  #--------------------------------------------------------------------------
+  # * Get Status Icon Bitmaps - Takes a Game_Battler and returns an array of 
+  #   bitmaps for drawing their current statuses
+  #--------------------------------------------------------------------------
+  def get_status_icon_bitmaps(battler)
+    icon_bitmaps = []
+    # for every state ID in battler's states array (which is sorted by priority)
+    for id in battler.states
+      # if it should be displayed
+      if $data_states[id].rating >= 1
+        # load icon bitmap
+        bitmap = get_status_icon_bitmap(id)
+        # store in temp array
+        icon_bitmaps.push(bitmap)      
+      end
+    end
+    return icon_bitmaps
+  end
+  #--------------------------------------------------------------------------
+  # * Get Status Icon Bitmap - Takes a Game_Battler and returns an array of bitmaps
+  #   for drawing their current statuses
+  #--------------------------------------------------------------------------
+  def get_status_icon_bitmap(id)
+    # get associated icon name
+    icon_base_name = $data_states[id].name
+    # get suffix
+    suffix = Mobius::Charge_Turn_Battle::STATUS_ICON_SUFFIX
+    # create filename
+    icon_name = icon_base_name + suffix
+    # load icon bitmap
+    return RPG::Cache.status_icon(icon_name)
+    rescue Errno::ENOENT
+      rect = Rect.new(0,0,24,24)
+      color = Mobius::Charge_Turn_Battle::MISSING_GRAPHIC_COLOR
+      bitmap = Bitmap.new(24,24)
+      bitmap.fill_rect(rect, color)
+      return bitmap
+  end
+    
+end
+
+#==============================================================================
+# ** Window_Help
+#------------------------------------------------------------------------------
+#  Adds status icons to unscanned enemies
+#==============================================================================
+class Window_Help < Window_Base
+  #--------------------------------------------------------------------------
+  # * Set Enemy
+  #     enemy : name and status displaying enemy
+  #--------------------------------------------------------------------------
+  alias mobius_status_icons_set_enemy mobius_ctb_set_enemy # unused alias
+  def mobius_ctb_set_enemy(enemy)
+    if enemy.states.any? { |id| $data_states[id].rating >= 1 }
+      # treat enemy as mostly actor
+      self.contents.clear
+      draw_actor_name(enemy, 140, 0, 120)
+      draw_actor_state(enemy, 344, 0, 120)          
+    else
+      # draw only name
+      text = enemy.name 
+      set_text(text, 1)      
+    end
+  end
+
+end
+# If STATUS_ICONS end
+end
+#==========================STATUS ICONS EXPANSION END==========================
+
 
 #===========================BEASTIARY EXPANSION================================
 #==============================================================================
