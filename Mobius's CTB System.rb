@@ -185,7 +185,7 @@ module Mobius
     # Once you've done that, set this option to the ID of the scan state that you created. 
     # Then whenever an enemy has the scan state applied, you'll be able to see their HP/SP
     # when targeting them.
-    SCAN_STATE_ID = 0
+    SCAN_STATE_ID = 17 # TODO: Change to 0!
     # OPTIONAL: If you would like a pop-up to be displayed when you use the skill for the 
     # first time, then you can do the following additional steps. Create a common event
     # called scan, and add a "script" command to it. Inside the script command, put
@@ -206,7 +206,7 @@ module Mobius
     # To enable the "status icons" expansion, set STATUS_ICONS below to "true"
     #==============================================================================
     # Set this option to "true" to enable this expansion
-    STATUS_ICONS = false
+    STATUS_ICONS = true # TODO: set to false!
     # If you've set the above to true, then you need to place an icon for each status in
     # the "Icons" folder by default but this can be changed if desired.
     # The names for each icon should be "StatusNameStatusSuffix"
@@ -325,9 +325,9 @@ class Game_Battler
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
-  alias mobius_ctb_initialize initialize
+  alias mobius_ctb_game_battler_initialize initialize
   def initialize
-    mobius_ctb_initialize
+    mobius_ctb_game_battler_initialize
     @charge_gauge = 0 
     @charge_gauge_dummy = 0 
   end
@@ -455,9 +455,9 @@ class Game_Enemy < Game_Battler
   #     troop_id     : troop ID
   #     member_index : troop member index
   #--------------------------------------------------------------------------
-  alias mobius_ctb_initialize initialize
+  alias mobius_ctb_game_enemy_initialize initialize
   def initialize(troop_id, member_index)
-    mobius_ctb_initialize(troop_id, member_index)
+    mobius_ctb_game_enemy_initialize(troop_id, member_index)
     @boss = Mobius::Charge_Turn_Battle::BOSS_LIST.include?(id)
   end
   #--------------------------------------------------------------------------
