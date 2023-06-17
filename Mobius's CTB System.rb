@@ -1063,6 +1063,8 @@ class Scene_Battle
   end
     # Make sprite set
     @spriteset = Spriteset_Battle.new
+    # Initialize wait count
+    @wait_count = 0
     # Execute transition
     if $data_system.battle_transition == ""
       Graphics.transition(20)
@@ -2171,11 +2173,14 @@ class Window_Help < Window_Base
       # treat enemy as mostly actor
       self.contents.clear
       draw_actor_name(enemy, 140, 0, 120)
-      draw_actor_state(enemy, 344, 0, 120)          
+      draw_actor_state(enemy, 344, 0, 120)
+      @actor = enemy
+      @text = nil
+      self.visible = true
     else
       # draw only name
-      text = enemy.name 
-      set_text(text, 1)      
+      text = enemy.name
+      set_text(text, 1)
     end
   end
 
