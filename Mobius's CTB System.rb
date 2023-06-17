@@ -115,9 +115,13 @@ module Mobius
     # inside of the square brackets.
     BOSS_LIST = []
 
-    # This option allows you to set the display word for escape similar to how you can set
+    # The following options all allow you to set display words similar to how you can set
     # custom words in the database for HP, SP, etc.
     ESCAPE_WORD = "Escape"
+    BATTLERS_WORD = "Battlers"
+    STATUS_WORD = "Status"
+    MAXHP_WORD = "MAXHP"
+    MAXSP_WORD = "MAXSP"
 
     # The battle system comes with a collection of turn icons to use. However, you don't 
     # have to use those if you don't want. As long as you leave the names unchanged, you 
@@ -568,64 +572,64 @@ end
 #------------------------------------------------------------------------------
 #  This window displays additional information during battle
 #==============================================================================
-
 class Window_BigBattleStatus < Window_Base
-  
-  attr_accessor   :action_battlers
-  
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
-  def initialize()
+  def initialize(all_battlers)
     super(0, 0, 640, 320)
     self.contents = Bitmap.new(width - 32, height - 32)
     self.back_opacity = 160
-    @action_battlers = nil
     self.visible = false
     self.z = 100
-    update
+    @all_battlers = all_battlers
+    refresh
   end
   #--------------------------------------------------------------------------
-  # * Update
+  # * Active Battlers - Returns only the battlers that exist
   #--------------------------------------------------------------------------
-  def update
+  def active_battlers
+    return @all_battlers.find_all do | battler |
+      battler.exist?
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * Refresh
+  #--------------------------------------------------------------------------
+  def refresh
     self.contents.clear
     self.contents.font.color = system_color
-    self.contents.draw_text(1, 0, 152, 32, "Battlers")
-    self.contents.draw_text(1 + 152, 0, 152, 32, "Status", 1)
-    self.contents.draw_text(1 + 304, 0, 152, 32, "HP / MAXHP", 2)
-    self.contents.draw_text(1 + 456, 0, 152, 32, "SP / MAXSP", 2)
+    # Local variables
+    battlers = Mobius::Charge_Turn_Battle::BATTLERS_WORD
+    status = Mobius::Charge_Turn_Battle::BATTLERS_WORD
+    hp = $data_system.words.hp
+    maxhp = Mobius::Charge_Turn_Battle::MAXHP_WORD
+    sp = $data_system.words.sp
+    maxsp = Mobius::Charge_Turn_Battle::MAXSP_WORD
+    w = 152
+    h = 32
+    # Draw labels
+    self.contents.draw_text(1 + (0*w), 0, w, h, battlers)
+    self.contents.draw_text(1 + (1*w), 0, w, h, status, 1)
+    self.contents.draw_text(1 + (2*w), 0, w, h, "#{hp} / #{maxhp}", 2)
+    self.contents.draw_text(1 + (3*w), 0, w, h, "#{sp} / #{maxsp}", 2)
+    # Draw battlers
     self.contents.font.color = normal_color
-    if @action_battlers != nil
-      for i in 0...@action_battlers.size
-        # @action_battlers will contain all the battlers in a battle including
-        # dead enemies, and KO'd actors
-        battler = @action_battlers[i]
-        break if battler == nil 
-        # So the line below checks to see if the battler still "exists"
-        # If he doesn't exist, he gets removed from the @action_battlers array
-        # The for loop is then called again using the same value for "i"
-        # This ensures the numbers and lines print correctly
-        # However, the for loop will still run to the original size of
-        # @action_battlers. So, the line above cancels the loop as soon as
-        # a nil value is reached
-        if not battler.exist?
-          @action_battlers.delete_at(i)
-          redo
-        end
-        # This if checks to see if the enemy has been scanned
-        # If he hasn't then it returns question mark values
-        if battler.is_a?(Game_Enemy) and not battler.state?(43)
-          state = make_battler_state_text(battler, 152, true)
-          self.contents.draw_text(1 + 304, i * 22 + 22, 152, 32,"???", 2) # HP
-          self.contents.draw_text(1 + 456, i * 22 + 22, 152, 32,"???", 2) # SP
-        else
-          state = make_battler_state_text(battler, 152, true)
-          draw_battler_hp(battler, 1 + 304, i * 22 + 22) #width = 152
-          draw_battler_sp(battler, 1 + 456, i * 22 + 22) #width = 152
-        end
-        self.contents.draw_text(1, i * 22 + 22, 152, 32, battler.name)
-        self.contents.draw_text(1 + 152, i * 22 + 22, 152, 32, state, 1)
+    battler_list = active_battlers()
+    for i in 0...battler_list.size
+      battler = battler_list[i]
+      # TODO: Add status icons support?
+      state = make_battler_state_text(battler, w, true)
+      self.contents.draw_text(1 + (0*w), 22 + (i*22), w, h, battler.name)
+      self.contents.draw_text(1 + (1*w), 22 + (i*22), w, h, state, 1)
+      # Check to see if the enemy has been scanned
+      # If not, then return question mark values
+      if battler.is_a?(Game_Enemy) and not battler.state?(Mobius::Charge_Turn_Battle::SCAN_STATE_ID)
+          self.contents.draw_text(1 + (2*w), 22 + (i*22), w, 32,"???", 2) # HP
+          self.contents.draw_text(1 + (3*w), 22 + (i*22), w, 32,"???", 2) # SP
+      else
+          draw_battler_hp(battler, 1 + (2*w), 22 + (i*22)) #width = 152
+          draw_battler_sp(battler, 1 + (3*w), 22 + (i*22)) #width = 152
       end
     end
   end
@@ -1110,7 +1114,8 @@ class Scene_Battle
     @status_window = Window_BattleStatus.new
     @message_window = Window_Message.new
     @turn_order_window = Window_TurnOrder.new #Mobius Added
-    @big_status_window = Window_BigBattleStatus.new #Mobius Added
+    all_battlers = [].concat($game_party.actors).concat($game_troop.enemies)
+    @big_status_window = Window_BigBattleStatus.new(all_battlers)
   if Mobius::Charge_Turn_Battle::BEASTIARY
     @enemy_detail_window = Window_BeastDetail.new(nil, true) #Mobius Added
   end
@@ -1909,8 +1914,7 @@ class Scene_Battle
   # * Start Big Status Window -- Mobius
   #--------------------------------------------------------------------------
   def start_big_status_window
-    @big_status_window.action_battlers = @current_battlers
-    @big_status_window.update
+    @big_status_window.refresh
     @big_status_window.visible = true
     @actor_command_window.active = false
     @actor_command_window.visible = false
@@ -1920,13 +1924,13 @@ class Scene_Battle
   # * Update Big Status Window -- Mobius
   #--------------------------------------------------------------------------
   def update_big_status_window
-     @big_status_window.update
-     if Input.trigger?(Input::A) or Input.trigger?(Input::B)
-       # Play cancel SE
+    @big_status_window.update
+    if Input.trigger?(Input::A) or Input.trigger?(Input::B)
+      # Play cancel SE
       $game_system.se_play($data_system.cancel_se)
       # End Turn Order Window
       end_big_status_window
-      end
+    end
   end
   #--------------------------------------------------------------------------
   # * End Big Status Window -- Mobius
