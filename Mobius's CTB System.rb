@@ -165,7 +165,18 @@ module Mobius
     # Keep in mind that this is very literal, so spaces count.
     # Lastly, you don't need to worry about this if you've set the above option to false.
     ENEMY_BOSS_PREFIX = "Boss: "    
-    
+
+
+    #==============================================================================
+    # ** EXPANSION SETTINGS
+    #------------------------------------------------------------------------------
+    # The following settings are all optional, and are only used with the expansions 
+    # to the core script.
+    #==============================================================================
+
+    #==============================================================================
+    # ** SCAN SKILL SETTINGS
+    #------------------------------------------------------------------------------
     # Because this battle system is designed to more tactical than the default system, a 
     # scan skill is basically a necessity to allow you to track an enemy's HP/SP. 
     # To set this up, first create a skill to perform scan in the database. Second,
@@ -180,13 +191,6 @@ module Mobius
     # called scan, and add a "script" command to it. Inside the script command, put
     # "Mobius.scan_skill_popup" without quotes. Then simply add the common event to the scan skill
     # you created earlier, and you're done!
-    #==============================================================================
-    
-    #==============================================================================
-    # ** EXPANSION SETTINGS
-    #------------------------------------------------------------------------------
-    # The following settings are all optional, and are only used with the expansions 
-    # to the core script.
     #==============================================================================
     
     #==============================================================================
