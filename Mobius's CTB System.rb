@@ -673,17 +673,13 @@ end
 #  This window displays the current turn order during battle  
 #  The window can be scrolled during the command phase
 #==============================================================================
-
 class Window_TurnOrder < Window_Base
-
-  attr_accessor :turn_order  # Turn Order
-  
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
   def initialize()
     super(640 - 64, 0, 64, 320) # right justified
-    self.contents = Bitmap.new(width - 32, 768)# 16 battlers tall
+    self.contents = Bitmap.new(width - 32, (16 * 48)) # 16 battlers tall
     self.back_opacity = 160
     @current_battlers = []
     @turn_order = []
@@ -699,7 +695,7 @@ class Window_TurnOrder < Window_Base
     refresh
   end
   #--------------------------------------------------------------------------
-  # * Update -- Mobius
+  # * Update
   #--------------------------------------------------------------------------
   def update(current_battlers = @current_battlers, index = @actor_index)
     @wait_count -= 1 if @wait_count > 0
@@ -716,13 +712,13 @@ class Window_TurnOrder < Window_Base
       end
     end
     make_turn_order
-    if @drawing_down #oy +
+    if @drawing_down
       if self.oy == (@first_draw_index * 48)
         @drawing_down = false
       else
         self.oy += 12
       end
-      return      
+      return
     end
     if @drawing_up
       if self.oy == (@first_draw_index * 48)
@@ -730,7 +726,7 @@ class Window_TurnOrder < Window_Base
       else
         self.oy -= 12
       end
-      return 
+      return
     end
     if Input.repeat?(Input::TURN_WINDOW_DRAW_DOWN_BUTTON)
       shift_draw_down
@@ -738,18 +734,16 @@ class Window_TurnOrder < Window_Base
     if Input.repeat?(Input::TURN_WINDOW_DRAW_UP_BUTTON)
       shift_draw_up
     end
-    
-    #refresh
   end
   #--------------------------------------------------------------------------
-  # * Refresh -- Mobius
+  # * Refresh
   #--------------------------------------------------------------------------
   def refresh(current_battlers = @current_battlers, index = @actor_index)
     self.contents.clear
-    draw_turn_order    
+    draw_turn_order
   end
   #--------------------------------------------------------------------------
-  # * Make Turn Order -- Mobius
+  # * Make Turn Order
   #--------------------------------------------------------------------------
   def make_turn_order(current_battlers = @current_battlers)
     if current_battlers != [] and current_battlers != nil
@@ -782,7 +776,7 @@ class Window_TurnOrder < Window_Base
     end
   end    
   #--------------------------------------------------------------------------
-  # * Dummy Battler Charged -- Mobius
+  # * Dummy Battler Charged
   #--------------------------------------------------------------------------
   def dummy_battler_charged?
     for battler in @current_battlers
@@ -791,7 +785,7 @@ class Window_TurnOrder < Window_Base
     return false
   end 
   #--------------------------------------------------------------------------
-  # * Draw Turn Order -- Mobius, Draws all icons
+  # * Draw Turn Order -- Draws all icons
   #-------------------------------------------------------------------------- 
   def draw_turn_order
     if @turn_order != []
@@ -800,13 +794,13 @@ class Window_TurnOrder < Window_Base
         if battler.is_a?(Game_Enemy)
           draw_enemy_graphic(battler, 0, i * 48)
         elsif battler.is_a?(Game_Actor)
-          draw_actor_graphic(battler, 0, i * 48) 
+          draw_actor_graphic(battler, 0, i * 48)
         end
       end
     end
   end
   #--------------------------------------------------------------------------
-  # * Shift Draw Up -- Mobius
+  # * Shift Draw Up
   #-------------------------------------------------------------------------- 
   def shift_draw_up
     if @first_draw_index == 0
@@ -825,7 +819,7 @@ class Window_TurnOrder < Window_Base
     end
   end    
   #--------------------------------------------------------------------------
-  # * Shift Draw Down -- Mobius
+  # * Shift Draw Down
   #-------------------------------------------------------------------------- 
   def shift_draw_down
     if @first_draw_index == 10
@@ -850,24 +844,22 @@ class Window_TurnOrder < Window_Base
   #     y     : draw spot y-coordinate
   #--------------------------------------------------------------------------
   def draw_actor_graphic(actor, x, y)
-  if Mobius::Charge_Turn_Battle::USE_ACTOR_PICTURES
-    actor_picture_name = actor.name + Mobius::Charge_Turn_Battle::ACTOR_PICTURES_SUFFIX
-    bitmap = RPG::Cache.picture(actor_picture_name)
-    cw = bitmap.width / 2
-    ch = bitmap.height / 2
+    if Mobius::Charge_Turn_Battle::USE_ACTOR_PICTURES
+      actor_picture_name = actor.name + Mobius::Charge_Turn_Battle::ACTOR_PICTURES_SUFFIX
+      bitmap = RPG::Cache.picture(actor_picture_name)
+      cw = bitmap.width / 2
+      ch = bitmap.height / 2
+    else
+      bitmap = RPG::Cache.character(actor.character_name, actor.character_hue)
+      cw = bitmap.width / 4 / 2
+      ch = bitmap.height / 4 / 2
+    end
     src_rect = Rect.new(cw - 16, ch - 24, 32, 48)
-  else
-    bitmap = RPG::Cache.character(actor.character_name, actor.character_hue)
-    cw = bitmap.width / 4 / 2
-    ch = bitmap.height / 4 / 2
-    src_rect = Rect.new(cw - 16, ch - 24, 32, 48)
-    #self.contents.blt(x, y, bitmap, src_rect)
-  end
-  self.contents.blt(x, y, bitmap, src_rect)
-  return
-  # If filename can't be found
+    self.contents.blt(x, y, bitmap, src_rect)
+    return
+    # If filename can't be found
   rescue Errno::ENOENT
-    rect = Rect.new(x, y, 32, 32)
+    rect = Rect.new(x, y, 32, 48)
     self.contents.fill_rect(rect, Mobius::Charge_Turn_Battle::MISSING_GRAPHIC_COLOR)
   end  
   #--------------------------------------------------------------------------
@@ -876,32 +868,30 @@ class Window_TurnOrder < Window_Base
   #     y     : draw spot y-coordinate
   #--------------------------------------------------------------------------
   def draw_enemy_graphic(enemy, x, y)
-  if Mobius::Charge_Turn_Battle::USE_ENEMY_PICTURES
-    enemy_picture_name = enemy.base_name + Mobius::Charge_Turn_Battle::ENEMY_PICTURES_SUFFIX
-    bitmap = RPG::Cache.picture(enemy_picture_name)
-    cw = bitmap.width / 2
-    ch = bitmap.height / 2
-    src_rect = Rect.new(cw - 16, ch - 24, 32, 48)
-  else
-    if enemy.boss
-      bitmap = RPG::Cache.picture("EnemyBoss")
+    if Mobius::Charge_Turn_Battle::USE_ENEMY_PICTURES
+      enemy_picture_name = enemy.base_name + Mobius::Charge_Turn_Battle::ENEMY_PICTURES_SUFFIX
+      bitmap = RPG::Cache.picture(enemy_picture_name)
+      cw = bitmap.width / 2
+      ch = bitmap.height / 2
     else
-      bitmap = RPG::Cache.picture(sprintf("Enemy%01d", enemy.index + 1))
+      if enemy.boss
+        bitmap = RPG::Cache.picture("EnemyBoss")
+      else
+        bitmap = RPG::Cache.picture(sprintf("Enemy%01d", enemy.index + 1))
+      end
+      cw = bitmap.width / 2
+      ch = bitmap.height / 2
     end
-    cw = bitmap.width / 2
-    ch = bitmap.height / 2
     src_rect = Rect.new(cw - 16, ch - 24, 32, 48)
-    #self.contents.blt(x, y, bitmap, src_rect)
-  end
-  self.contents.blt(x, y, bitmap, src_rect)
-  return
+    self.contents.blt(x, y, bitmap, src_rect)
+    return
   # If filename can't be found
   rescue Errno::ENOENT
-    rect = Rect.new(x, y, 32, 32)
+    rect = Rect.new(x, y, 32, 48)
     self.contents.fill_rect(rect, Mobius::Charge_Turn_Battle::MISSING_GRAPHIC_COLOR)
   end
 end
-  
+
 #==============================================================================
 # ** Arrow_All_Enemy
 #------------------------------------------------------------------------------
@@ -1067,14 +1057,11 @@ class Arrow_All_Actor
 end
 
 #==============================================================================
-# ** Scene_Battle (part 1)
+# ** Scene_Battle
 #------------------------------------------------------------------------------
 #  This class performs battle screen processing.
 #==============================================================================
-
 class Scene_Battle
-  attr_reader :active_battler #Mobius added. Use $scene.active_battler to get
-                              #current actor during batttle
   #--------------------------------------------------------------------------
   # * Main Processing
   #--------------------------------------------------------------------------
@@ -1121,8 +1108,6 @@ class Scene_Battle
   end
     # Make sprite set
     @spriteset = Spriteset_Battle.new
-    # Initialize wait count
-    @wait_count = 0
     # Execute transition
     if $data_system.battle_transition == ""
       Graphics.transition(20)
@@ -2084,6 +2069,17 @@ class Game_Party
   end
 
 end
+
+#==============================================================================
+# ** Scene_Battle
+#------------------------------------------------------------------------------
+#  Add a public getter for the active battler
+#==============================================================================
+class Scene_Battle
+  # Use $scene.active_battler to get current actor during batttle
+  attr_reader :active_battler
+end
+
 #==============================================================================
 # ** Mobius
 #------------------------------------------------------------------------------
