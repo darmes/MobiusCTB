@@ -485,24 +485,11 @@ end
 #  This class handles the party. It includes information on amount of gold 
 #  and items. Refer to "$game_party" for the instance of this class.
 #==============================================================================
-
 class Game_Party
-  
-  attr_accessor  :scan_list                # ID array of scanned enemies - Mobius
-  
-  alias mobius_party_initialize initialize
-  alias mobius_clear_actions clear_actions
-  
-  #--------------------------------------------------------------------------
-  # * Object Initialization
-  #--------------------------------------------------------------------------
-  def initialize
-    mobius_party_initialize
-    @scan_list = [1,2,3,4,5,6]
-  end
   #--------------------------------------------------------------------------
   # * Clear All Member Actions and Charge Gauges
   #--------------------------------------------------------------------------
+  alias mobius_clear_actions clear_actions
   def clear_actions
     mobius_clear_actions
     # Clear All Member Charge Gauges
@@ -2185,6 +2172,72 @@ class Scene_Battle
 
 end
 
+#================================SCAN SKILL====================================
+#==============================================================================
+# ** Game_Party
+#------------------------------------------------------------------------------
+#  Add one new concept to the Game_Party class
+#    @scan_list
+#      This is a list of enemy IDs that have been scanned by the party. 
+#      This list is used by the beastiary to show only scanned enemies.
+#==============================================================================
+class Game_Party
+  #--------------------------------------------------------------------------
+  # * Public Instance Variables
+  #--------------------------------------------------------------------------
+  attr_accessor  :scan_list  # ID array of scanned enemies
+  #--------------------------------------------------------------------------
+  # * Object Initialization
+  #--------------------------------------------------------------------------
+  alias mobius_ctb_initialize initialize
+  def initialize
+    mobius_ctb_initialize
+    @scan_list = []
+  end
+
+end
+#==============================================================================
+# ** Mobius
+#------------------------------------------------------------------------------
+#  This module is a collection of various, random methods that don't fit 
+#  anywhere else, and need to be able to be called from anywhere.
+#
+#  Usage:
+#   All methods are module methods and can be called globally by prefacing the
+#   method name with "Mobius", ex. "Mobius.example"
+#==============================================================================
+module Mobius
+  #------------------------------------------------------------------------
+  # * Scan Skill - scans an enemy and adds their stats to the beastiary
+  #------------------------------------------------------------------------
+  def self.scan_skill
+    ab = $scene.active_battler
+    ti = ab.current_action.target_index
+    en = $game_troop.enemies[ti]
+    $game_party.scan_list.push(en.id).uniq!
+  end
+  #------------------------------------------------------------------------
+  # * Scan Skill Popup - scans an enemy creates a pop-up window
+  #------------------------------------------------------------------------
+  def self.scan_skill_popup
+    ab = $scene.active_battler
+    ti = ab.current_action.target_index
+    en = $game_troop.enemies[ti]
+    name = en.name
+    hp = en.hp ; maxhp = en.maxhp
+    sp = en.sp ; maxsp = en.maxsp
+    atk = en.atk
+    pdef = en.pdef ; mdef = en.mdef
+    txt = "#{name} \nHP: #{hp}/#{maxhp}\n"+
+    "SP: #{sp}/#{maxsp} \nATK: #{atk} \nPDEF: #{pdef}\n"+
+    "MDEF: #{mdef}"
+    $game_temp.message_text = txt
+    Window_Message.new
+  end
+
+end
+#==============================SCAN SKILL END==================================
+
 #===========================BEASTIARY EXPANSION================================
 #==============================================================================
 # ** Game_Enemy
@@ -2799,46 +2852,3 @@ module RPG::Cache
   end
 end
 #=============================RGSS CHANGES END=================================
-#==============================================================================
-# ** Mobius
-#------------------------------------------------------------------------------
-#  This module is a collection of various, random methods that don't fit 
-#  anywhere else, and need to be able to be called from anywhere.
-#
-#  Author:
-#   Mobius XVI
-#
-#  Usage:
-#   All methods are module methods and can be called globally by prefacing the
-#   method name with "Mobius", ex. "Mobius.example"
-#==============================================================================
-module Mobius
-  #------------------------------------------------------------------------
-  # * Scan Skill - scans an enemy and adds their stats to the beastiary
-  #------------------------------------------------------------------------
-  def self.scan_skill
-    ab = $scene.active_battler
-    ti = ab.current_action.target_index
-    en = $game_troop.enemies[ti]
-    $game_party.scan_list.push(en.id).uniq!
-  end
-  #------------------------------------------------------------------------
-  # * Scan Skill Popup - scans an enemy creates a pop-up window
-  #------------------------------------------------------------------------
-  def self.scan_skill_popup
-    ab = $scene.active_battler
-    ti = ab.current_action.target_index
-    en = $game_troop.enemies[ti]
-    name = en.name
-    hp = en.hp ; maxhp = en.maxhp
-    sp = en.sp ; maxsp = en.maxsp
-    atk = en.atk
-    pdef = en.pdef ; mdef = en.mdef
-    txt = "#{name} \nHP: #{hp}/#{maxhp}\n"+
-    "SP: #{sp}/#{maxsp} \nATK: #{atk} \nPDEF: #{pdef}\n"+
-    "MDEF: #{mdef}"
-    $game_temp.message_text = txt
-    Window_Message.new
-  end
-
-end # Module End
