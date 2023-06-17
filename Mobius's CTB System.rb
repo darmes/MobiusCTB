@@ -300,10 +300,16 @@ end
 #==============================================================================
 
 #==============================================================================
-# ** Game_Battler (part 1)
+# ** Game_Battler
 #------------------------------------------------------------------------------
-#  This class deals with battlers. It's used as a superclass for the Game_Actor
-#  and Game_Enemy classes.
+#  Add two new concepts to the Game_Battler class
+#    @charge_gauge
+#      This represents how close a battler is to their next turn. 
+#      Ranges from 0-100.
+#      When this value reaches 100, the battler gets a turn.
+#    @charge_gauge_dummy
+#      This is used to calculate future turns, and isn't "real".
+#      We can freely manipulate this value to forecast out turn order.
 #==============================================================================
 class Game_Battler
   #--------------------------------------------------------------------------
