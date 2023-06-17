@@ -310,6 +310,7 @@ end
 #    @charge_gauge_dummy
 #      This is used to calculate future turns, and isn't "real".
 #      We can freely manipulate this value to forecast out turn order.
+#  Adjusts how states are removed to be compatible with new turn structure
 #==============================================================================
 class Game_Battler
   #--------------------------------------------------------------------------
@@ -399,6 +400,37 @@ class Game_Battler
       return Mobius::Charge_Turn_Battle::ITEM_SPEED_FACTORS[item_id]
     end
   end  
+  #--------------------------------------------------------------------------
+  # Explanation:
+  #  DBS reduces turn count and removes states at end of turn
+  #  This fix causes turn count to decrement at end of turn while 
+  #  state removal happens at beginning of turn
+  # TO BE COMPATIBLE WITH MY CTB SYSTEM
+  #  "Remove states auto" is still called in phase 4 since the only active battler
+  #  in phase 4 is whoever's turn it is, thus they will have there turn count
+  #  decrement by one.
+  #  "Remove states auto start" is called in phase two after determining whose turn
+  #  it is next. That way only the current battler will have their states removed.
+  #--------------------------------------------------------------------------
+  # * Natural Removal of States (called up each end turn)
+  #--------------------------------------------------------------------------
+  def remove_states_auto
+    for i in @states_turn.keys.clone
+      if @states_turn[i] > 0
+        @states_turn[i] -= 1
+      end
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * Natural Removal of States (called up each start turn)
+  #--------------------------------------------------------------------------
+  def remove_states_auto_start
+    for i in @states_turn.keys.clone
+      if @states_turn[i] <= 0 and rand(100) < $data_states[i].auto_release_prob
+        remove_state(i)
+      end
+    end
+  end
 end
 
 #==============================================================================
@@ -2806,40 +2838,3 @@ module Mobius
   end
 
 end # Module End
-
-# Code by Mobius XVI
-# DBS fixes as requested by TheRiotInside
-# Changes methods for removing states
-# Explanation:
-# DBS reduces turn count and removes states at end of turn
-# This fixes causes turn count to decrement at end of turn while 
-# state removal happens at beginning of turn
-
-# TO BE COMPATIBLE WITH MY CTB SYSTEM
-# "Remove states auto" is still called in phase 4 since the only active battler
-# in phase 4 is whoever's turn it is, thus they will have there turn count
-# decrement by one.
-# "Remove states auto start" is called in phase two after determining whose turn
-# it is next. That way only the current battler will have their states removed.
-class Game_Battler
-  #--------------------------------------------------------------------------
-  # * Natural Removal of States (called up each end turn)
-  #--------------------------------------------------------------------------
-  def remove_states_auto
-    for i in @states_turn.keys.clone
-      if @states_turn[i] > 0
-        @states_turn[i] -= 1
-      end
-    end
-  end
-  #--------------------------------------------------------------------------
-  # * Natural Removal of States (called up each start turn)
-  #--------------------------------------------------------------------------
-  def remove_states_auto_start
-    for i in @states_turn.keys.clone
-      if @states_turn[i] <= 0 and rand(100) < $data_states[i].auto_release_prob
-        remove_state(i)
-      end
-    end
-  end
-end # Class end
