@@ -118,7 +118,7 @@ module Mobius
     # This option allows you to set the display word for escape similar to how you can set
     # custom words in the database for HP, SP, etc.
     ESCAPE_WORD = "Escape"
-    
+
     # The battle system comes with a collection of turn icons to use. However, you don't 
     # have to use those if you don't want. As long as you leave the names unchanged, you 
     # can modify them however you want. But keep in mind that only 32x48 (width x height)
@@ -364,38 +364,33 @@ class Game_Battler
   #--------------------------------------------------------------------------
   def speed_factor
     case @current_action.kind
-    #when basic ( attack / defend / escape / nothing )
+    # When basic ( attack / defend / escape / nothing )
     when 0
       case @current_action.basic
-      # when attack
+      # When attack
       when 0
-        #get speed factor from hash: WEAPON_SPEED_FACTORS
-        spd = Mobius::Charge_Turn_Battle::WEAPON_SPEED_FACTORS[@weapon_id]
-        return spd
-      # when defend
+        # Get speed factor from hash: WEAPON_SPEED_FACTORS
+        return Mobius::Charge_Turn_Battle::WEAPON_SPEED_FACTORS[@weapon_id]
+      # When defend
       when 1
         return Mobius::Charge_Turn_Battle::DEFEND_SPEED_FACTOR
-      # when escape
+      # When escape
       when 2
         return Mobius::Charge_Turn_Battle::ESCAPE_SPEED_FACTOR
-      # when nothing
+      # When nothing
       when 3
         return Mobius::Charge_Turn_Battle::NOTHING_SPEED_FACTOR
       end
-    #when skill
+    # When skill
     when 1
-      #get skill_id
       skill_id = @current_action.skill_id
-      #get speed factor from hash: SKILL_SPEED_FACTORS
-      spd = Mobius::Charge_Turn_Battle::SKILL_SPEED_FACTORS[skill_id]
-      return spd
-    #when item
+      # Get speed factor from hash: SKILL_SPEED_FACTORS
+      return Mobius::Charge_Turn_Battle::SKILL_SPEED_FACTORS[skill_id]
+    # When item
     when 2
-      #get item_id
       item_id = @current_action.item_id
-      #get speed factor from hash: ITEM_SPEED_FACTORS
-      spd = Mobius::Charge_Turn_Battle::ITEM_SPEED_FACTORS[item_id]
-      return spd
+      # Get speed factor from hash: ITEM_SPEED_FACTORS
+      return Mobius::Charge_Turn_Battle::ITEM_SPEED_FACTORS[item_id]
     end
   end  
 end
