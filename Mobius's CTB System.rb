@@ -7,7 +7,7 @@
 #
 # Introduction:
 #
-#   This script overhauls the default battle system and replaces it with a 
+#   This script overhauls the default battle system and replaces it with a
 #   "CTB" system similar to Final Fantasy Tactics and Final Fantasy X.
 #   Battlers now use their speed to charge up a hidden turn gauge, and
 #   when it's full, they get a turn immediately. This causes turns to alternate
@@ -20,7 +20,7 @@
 #  - Import the enemy icon pictures into your project, and place them in
 #    the "pictures" folder.
 #
-#  - The customization section below has additional instructions on 
+#  - The customization section below has additional instructions on
 #    how you can set certain preferences up to your liking.
 #
 #  - Below the customization section are additional expansions that you can
@@ -29,7 +29,7 @@
 # Issues/Bugs/Possible Bugs:
 #
 #   - As this script basically replaces the default battle system, it
-#     will likely be incompatible with other battle system scripts. 
+#     will likely be incompatible with other battle system scripts.
 #
 #  Credits/Thanks:
 #    - Mobius XVI, author
@@ -39,7 +39,7 @@
 #  License
 #    This script is licensed under the MIT license, so you can use it for both commercial and non-commercial games!
 #    Check the included license file for the full text.
-#    Further, if you do decide to use this script in a commercial product, I'd ask that you 
+#    Further, if you do decide to use this script in a commercial product, I'd ask that you
 #    let me know via a forum post or a PM. Thanks.
 #
 #==============================================================================
@@ -49,14 +49,14 @@ module Mobius
   module Charge_Turn_Battle
     # CHARGE_RATE lets you set a formula for how a charge bar will fill.
     # Keep in mind that this will all happen behind the scenes, so it won't
-    # effect how "quickly" it will fill in real time. 
+    # effect how "quickly" it will fill in real time.
     # Your formula must be contained between two quotation
-    # marks, i.e. "your formula". Formulas are valid provided they make 
+    # marks, i.e. "your formula". Formulas are valid provided they make
     # mathematical sense. You can use any integer numbers, mathematical symbols
     # like +, -, *, /, or ** for exponentiation. You can also use the following
     # list of keywords to get a battler's stat:
     # hp = current HP ; sp = current SP ; maxhp = Max HP ; maxsp = Max SP
-    # str = strength ; dex = dexterity ; agi = agility ; int = intelligence 
+    # str = strength ; dex = dexterity ; agi = agility ; int = intelligence
     # atk = attack ; pdef = physical defence ; mdef = magical defence ; eva = evasion
     # here are some example formulas
     # "(10 * str) / (agi + 7)"
@@ -66,10 +66,10 @@ module Mobius
     # CHARGE_BAR_TOTAL is the numerical amount that the charge bar must reach
     # before a battler gets a turn. Between this and the CHARGE_RATE, you can affect
     # how often a battler gets an "extra" turn. As an example, say you have two battlers
-    # A and B with agilities of 5 and 10 respectively. Further, let's say the CHARGE_RATE 
-    # is just "agi" and the CHARGE_BAR_TOTAL is 100. Both battlers will start with a charge 
+    # A and B with agilities of 5 and 10 respectively. Further, let's say the CHARGE_RATE
+    # is just "agi" and the CHARGE_BAR_TOTAL is 100. Both battlers will start with a charge
     # bar of 0, and then fill them up behind the scenes until A has 50 and B has 100.
-    # B then gets a turn, and his charge bar resets to 0. The bars fill up until A has 100 
+    # B then gets a turn, and his charge bar resets to 0. The bars fill up until A has 100
     # and B has 100. A gets a turn, then B gets a turn, and both bars reset to 0. So you can
     # see how B will essentially get two turns for every turn that A gets.
     CHARGE_BAR_TOTAL = 100
@@ -84,7 +84,7 @@ module Mobius
     # but would fatigue the battler. You could set a speed factor of -10 and then after
     # they executed the attack, their charge bar would get reset to 0 and then immediately
     # have 10 points removed.
-    
+
     # DEFEND_SPEED_FACTOR sets the bonus/penalty for defending.
     DEFEND_SPEED_FACTOR = 0
     # ESCAPE_SPEED_FACTOR sets the bonus/penalty for attempting to escape and failing.
@@ -96,17 +96,17 @@ module Mobius
     # To set this up, place the weapon ID followed by an arrow "=>" and then the speed factor
     # inside of the curly brackets. Separate entries by a comma. The entries can span multiple
     # lines so long as all entries are surrounded by the start and end curly brackets.
-    # Example: { 1 => 10, 2 => 5 } 
+    # Example: { 1 => 10, 2 => 5 }
     # You don't need to set a speed factor for every weapon if you don't want to. Any weapon
     # not explicitly given a speed factor here will use the "default" value on the next line.
     WEAPON_SPEED_FACTORS = {}
     # The default line sets the speed factor for any weapon not included above.
     WEAPON_SPEED_FACTORS.default = 0
     # SKILL_SPEED_FACTORS is identical in set up to WEAPON_SPEED_FACTORS but for skills.
-    SKILL_SPEED_FACTORS = {} 
+    SKILL_SPEED_FACTORS = {}
     SKILL_SPEED_FACTORS.default = 0
     # ITEM_SPEED_FACTORS is identical in set up to WEAPON_SPEED_FACTORS but for items.
-    ITEM_SPEED_FACTORS = {} 
+    ITEM_SPEED_FACTORS = {}
     ITEM_SPEED_FACTORS.default = 0
 
     # You can designate certain enemies as "bosses". This will change how their names are
@@ -123,13 +123,13 @@ module Mobius
     MAXHP_WORD = "MAXHP"
     MAXSP_WORD = "MAXSP"
 
-    # The battle system comes with a collection of turn icons to use. However, you don't 
-    # have to use those if you don't want. As long as you leave the names unchanged, you 
+    # The battle system comes with a collection of turn icons to use. However, you don't
+    # have to use those if you don't want. As long as you leave the names unchanged, you
     # can modify them however you want. But keep in mind that only 32x48 (width x height)
     # pixels will be shown. But let's say you'd rather have unique icons for each actor
     # and/or each enemy. Then these options are for you.
-    
-    # Set this option to "true" to enable unique icons for each actor. 
+
+    # Set this option to "true" to enable unique icons for each actor.
     USE_ACTOR_PICTURES = false
     # If you've set the above to true, then you need to place an icon for each actor in
     # the "Pictures" folder. The names for each picture should be "ActorNameActorSuffix"
@@ -147,12 +147,12 @@ module Mobius
     ENEMY_PICTURES_SUFFIX = "_Turn_Order_Icon"
     # If any image can't be found, a 32x32 box of the below color will be drawn instead.
     # You can change the numbers to change the color. The numbers are RGB values.
-    # I recommend you just leave this black, but I realize that might be hard to see 
+    # I recommend you just leave this black, but I realize that might be hard to see
     # for some people so you can change it if need be.
     MISSING_GRAPHIC_COLOR = Color.new(0, 0, 0)
-    
+
     # When showing the enemy's name during battle, the battle system can be set to
-    # automatically add a prefix based on the enemy's index. This way the player can 
+    # automatically add a prefix based on the enemy's index. This way the player can
     # distinguish between Ghost A and Ghost B for example.
     # Set this to "true" to enable the prefixes; set this to "false" to disable it.
     USE_ENEMY_PREFIX = true
@@ -160,53 +160,53 @@ module Mobius
     # Simply place your prefixes, separated by commas, in between the quotes.
     # Keep in mind that this is very literal, so spaces count.
     # Also, if you don't have eight different prefixes, then some enemies just
-    # won't get a prefix. 
+    # won't get a prefix.
     # Lastly, you don't need to worry about this if you've set the above option to false.
     ENEMY_PREFIX = "A: ,B: ,C: ,D: ,E: ,F: ,G: ,H: "
     # If you are using prefixes, you can customize how they are displayed.
     # Any enemy tagged as a "boss" in the "BOSS_LIST" above will get this prefix
-    # instead of a normal prefix. 
+    # instead of a normal prefix.
     # Keep in mind that this is very literal, so spaces count.
     # Lastly, you don't need to worry about this if you've set the above option to false.
-    ENEMY_BOSS_PREFIX = "Boss: "    
+    ENEMY_BOSS_PREFIX = "Boss: "
 
 
     #==============================================================================
     # ** EXPANSION SETTINGS
     #------------------------------------------------------------------------------
-    # The following settings are all optional, and are only used with the expansions 
+    # The following settings are all optional, and are only used with the expansions
     # to the core script.
     #==============================================================================
 
     #==============================================================================
     # ** SCAN SKILL SETTINGS
     #------------------------------------------------------------------------------
-    # Because this battle system is designed to more tactical than the default system, a 
-    # scan skill is basically a necessity to allow you to track an enemy's HP/SP. 
+    # Because this battle system is designed to more tactical than the default system, a
+    # scan skill is basically a necessity to allow you to track an enemy's HP/SP.
     # To set this up, first create a skill to perform scan in the database. Second,
     # create a state for scan in the database. The skill and state can be configured however
     # you want just make sure that the scan skill applies the scan state to the enemy when used.
-    # Once you've done that, set this option to the ID of the scan state that you created. 
+    # Once you've done that, set this option to the ID of the scan state that you created.
     # Then whenever an enemy has the scan state applied, you'll be able to see their HP/SP
     # when targeting them.
     SCAN_STATE_ID = 17 # TODO: Change to 0!
-    # OPTIONAL: If you would like a pop-up to be displayed when you use the skill for the 
+    # OPTIONAL: If you would like a pop-up to be displayed when you use the skill for the
     # first time, then you can do the following additional steps. Create a common event
     # called scan, and add a "script" command to it. Inside the script command, put
     # "Mobius.scan_skill_popup" without quotes. Then simply add the common event to the scan skill
     # you created earlier, and you're done!
     #==============================================================================
-    
+
     #==============================================================================
     # ** STATUS_ICONS SETTINGS
     #------------------------------------------------------------------------------
-    # The STATUS_ICONS expansion will display icons in the status area for users 
+    # The STATUS_ICONS expansion will display icons in the status area for users
     # and enemies during battle rather than the default plain text. The icons can
     # be any size, but 24x24 is optimal. Anything taller than 32 pixels will have
     # parts of the top and bottom cutoff as it will center the icon. With a width
     # of 24 pixels, you should be able to fit five icons. Additionally, the states
     # will be displayed with the normal priority set by the database and states with
-    # a priority of zero will not be displayed.    
+    # a priority of zero will not be displayed.
     # To enable the "status icons" expansion, set STATUS_ICONS below to "true"
     #==============================================================================
     # Set this option to "true" to enable this expansion
@@ -220,13 +220,13 @@ module Mobius
     STATUS_ICON_SUFFIX = "_Status_Icon"
     # Here you can set the path to the status icons. Note that it is local to the project folder.
     STATUS_ICON_PATH = "Graphics/Icons/"
-    
+
     #==============================================================================
     # ** BEASTIARY SETTINGS
     #------------------------------------------------------------------------------
     # The BEASTIARY expansion has two parts - a standalone scene that a player could
     # use to review information on previous foes, and an expanded info window that
-    # displays during battle similar to FFXIII. To access the standalone scene, 
+    # displays during battle similar to FFXIII. To access the standalone scene,
     # use the script call "$scene = Scene_Beastiary.new". To access the info window,
     # you can set a dedicated button below in the INPUT SETTINGS. Note that a player
     # will have to be selecting an enemy for the button to work.
@@ -238,7 +238,7 @@ module Mobius
     # For additional setup and configuration, see the below instructions.
     #==============================================================================
     # Set this option to "true" to enable this expansion
-    BEASTIARY = false 
+    BEASTIARY = false
     # The standalone beastiary will show a 200x200 sprite of the enemy.
     # For most small enemies, this is sufficient to display the entire sprite
     # but not for large enemies. So you can create alternate display sprites.
@@ -253,29 +253,29 @@ module Mobius
     # You can change that by configuring the path below.
     # Note that the path is local to the project directory.
     BEASTIARY_SPRITE_PATH = "Graphics/Pictures/"
-    # The beastiary window draws some divider lines which by default are colored 
+    # The beastiary window draws some divider lines which by default are colored
     # white. You can change the color to whatever you want by setting the below
     # numbers to your desired R,G,B values.
     BEASTIARY_DIVIDER_LINE_COLOR = Color.new(255,255,255)
     # When naming an enemy's stats, the script will use whatever you have set in
-    # the database, but there is no place in the database for an "EVA" word, so 
+    # the database, but there is no place in the database for an "EVA" word, so
     # you can set it below.
     BEASTIARY_EVASION_WORD = "EVA"
     # Here you can configure the descriptors for the various element efficiencies
     BEASTIARY_ELEMENT_WORD_200  = "Helpless"  # Rank A
     BEASTIARY_ELEMENT_WORD_150  = "Weak"      # Rank B
-    BEASTIARY_ELEMENT_WORD_100  = "Normal"    # Rank C 
-    BEASTIARY_ELEMENT_WORD_50   = "Resistant" # Rank D 
-    BEASTIARY_ELEMENT_WORD_0    = "Immune"    # Rank E 
-    BEASTIARY_ELEMENT_WORD_M100 = "Absorbs"   # Rank F 
+    BEASTIARY_ELEMENT_WORD_100  = "Normal"    # Rank C
+    BEASTIARY_ELEMENT_WORD_50   = "Resistant" # Rank D
+    BEASTIARY_ELEMENT_WORD_0    = "Immune"    # Rank E
+    BEASTIARY_ELEMENT_WORD_M100 = "Absorbs"   # Rank F
     # Here you can configure the descriptors for the various status efficiencies
     BEASTIARY_STATUS_WORD_100   = "Helpless"  # Rank A
     BEASTIARY_STATUS_WORD_80    = "Weak"      # Rank B
-    BEASTIARY_STATUS_WORD_60    = "Normal"    # Rank C 
-    BEASTIARY_STATUS_WORD_40    = "Resistant" # Rank D 
-    BEASTIARY_STATUS_WORD_20    = "Hardened"  # Rank E 
-    BEASTIARY_STATUS_WORD_0     = "Immune"    # Rank F 
-    
+    BEASTIARY_STATUS_WORD_60    = "Normal"    # Rank C
+    BEASTIARY_STATUS_WORD_40    = "Resistant" # Rank D
+    BEASTIARY_STATUS_WORD_20    = "Hardened"  # Rank E
+    BEASTIARY_STATUS_WORD_0     = "Immune"    # Rank F
+
   end
 end
 #==============================================================================
@@ -286,7 +286,7 @@ end
 module Input
     # The battle system has a few additional windows that can be opened/closed/controlled
     # during battle, and therefore need their own buttons. You can customize what
-    # those buttons are here. Remember these are not keys on the keyboard but the 
+    # those buttons are here. Remember these are not keys on the keyboard but the
     # built-in "buttons". If you press F1 while playing, you can change what keyboard
     # key is linked to what "button". Valid options are A, R, L, X, Y, or Z.
     # The options should be entered with formatting (like they are below).
@@ -296,7 +296,7 @@ module Input
     TURN_WINDOW_DRAW_UP_BUTTON = L
 end
 #==============================================================================
-# ** CUSTOMIZATION END  
+# ** CUSTOMIZATION END
 #------------------------------------------------------------------------------
 # ** EDIT BELOW THIS LINE AT OWN RISK!!!
 #==============================================================================
@@ -312,7 +312,7 @@ end
 #------------------------------------------------------------------------------
 #  Add two new concepts to the Game_Battler class
 #    @charge_gauge
-#      This represents how close a battler is to their next turn. 
+#      This represents how close a battler is to their next turn.
 #      Ranges from 0-100.
 #      When this value reaches 100, the battler gets a turn.
 #    @charge_gauge_dummy
@@ -324,29 +324,29 @@ class Game_Battler
   #--------------------------------------------------------------------------
   # * Public Instance Variables
   #--------------------------------------------------------------------------
-  attr_accessor :charge_gauge             # charge gauge 
-  attr_accessor :charge_gauge_dummy       # charge gauge dummy 
+  attr_accessor :charge_gauge             # charge gauge
+  attr_accessor :charge_gauge_dummy       # charge gauge dummy
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
   alias mobius_ctb_game_battler_initialize initialize
   def initialize
     mobius_ctb_game_battler_initialize
-    @charge_gauge = 0 
-    @charge_gauge_dummy = 0 
+    @charge_gauge = 0
+    @charge_gauge_dummy = 0
   end
   #--------------------------------------------------------------------------
   # * Charge -- Increases a battler's actual charge gauge
   #--------------------------------------------------------------------------
   def charge
-    @charge_gauge += eval(Mobius::Charge_Turn_Battle::CHARGE_RATE)  
+    @charge_gauge += eval(Mobius::Charge_Turn_Battle::CHARGE_RATE)
   end
   #--------------------------------------------------------------------------
   # * Dummy Charge -- Increases a battler's dummy charge gauge for use
   #   in calculating turn order
   #--------------------------------------------------------------------------
   def dummy_charge
-    @charge_gauge_dummy += eval(Mobius::Charge_Turn_Battle::CHARGE_RATE)    
+    @charge_gauge_dummy += eval(Mobius::Charge_Turn_Battle::CHARGE_RATE)
   end
   #--------------------------------------------------------------------------
   # * Dummy Charge Copy -- Sets a battler's dummy gauge equal to normal gauge
@@ -362,7 +362,7 @@ class Game_Battler
     @charge_gauge += speed_factor
   end
   #--------------------------------------------------------------------------
-  # * Dummy Charge Reset -- Resets a battler's dummy charge gauge to zero 
+  # * Dummy Charge Reset -- Resets a battler's dummy charge gauge to zero
   #--------------------------------------------------------------------------
   def dummy_charge_reset
     @charge_gauge_dummy -= Mobius::Charge_Turn_Battle::CHARGE_BAR_TOTAL
@@ -407,11 +407,11 @@ class Game_Battler
       # Get speed factor from hash: ITEM_SPEED_FACTORS
       return Mobius::Charge_Turn_Battle::ITEM_SPEED_FACTORS[item_id]
     end
-  end  
+  end
   #--------------------------------------------------------------------------
   # Explanation:
   #  DBS reduces turn count and removes states at end of turn
-  #  This fix causes turn count to decrement at end of turn while 
+  #  This fix causes turn count to decrement at end of turn while
   #  state removal happens at beginning of turn
   # TO BE COMPATIBLE WITH MY CTB SYSTEM
   #  "Remove states auto" is still called in phase 4 since the only active battler
@@ -446,7 +446,7 @@ end
 #------------------------------------------------------------------------------
 #  Add one new concept to the Game_Enemy class
 #    @boss
-#      This represents if an enemy should be treated as a boss. 
+#      This represents if an enemy should be treated as a boss.
 #      This affects certain display elements like prefixing the name with "Boss:"
 #==============================================================================
 class Game_Enemy < Game_Battler
@@ -517,7 +517,7 @@ class Window_Base < Window
   def draw_bitmap_centered(bitmap, rect)
     draw_x = ( (rect.width - bitmap.width) / 2 ) + rect.x
     draw_y = ( (rect.height - bitmap.height) / 2 ) + rect.y
-    self.contents.blt(draw_x, draw_y, bitmap, bitmap.rect)    
+    self.contents.blt(draw_x, draw_y, bitmap, bitmap.rect)
   end
   #--------------------------------------------------------------------------
   # * Draw Actor Name - Adds width parameter
@@ -529,7 +529,7 @@ class Window_Base < Window
   def draw_actor_name(actor, x, y, width = 120)
     self.contents.font.color = normal_color
     self.contents.draw_text(x, y, width, 32, actor.name)
-  end  
+  end
   #--------------------------------------------------------------------------
   # * Draw Icon
   #     icon_name : filename of the icon ("String")
@@ -750,7 +750,7 @@ class Window_TurnOrder < Window_Base
       #initialize dummy gauges
       for battler in current_battlers
         battler.dummy_charge_copy
-      end 
+      end
       #initialize turn order
       turn_order_temp = []
       until turn_order_temp.size >= 16
@@ -774,7 +774,7 @@ class Window_TurnOrder < Window_Base
         refresh
       end
     end
-  end    
+  end
   #--------------------------------------------------------------------------
   # * Dummy Battler Charged
   #--------------------------------------------------------------------------
@@ -783,10 +783,10 @@ class Window_TurnOrder < Window_Base
       return true if battler.charge_gauge_dummy >= Mobius::Charge_Turn_Battle::CHARGE_BAR_TOTAL
     end
     return false
-  end 
+  end
   #--------------------------------------------------------------------------
   # * Draw Turn Order -- Draws all icons
-  #-------------------------------------------------------------------------- 
+  #--------------------------------------------------------------------------
   def draw_turn_order
     if @turn_order != []
       for i in 0...@turn_order.size
@@ -801,7 +801,7 @@ class Window_TurnOrder < Window_Base
   end
   #--------------------------------------------------------------------------
   # * Shift Draw Up
-  #-------------------------------------------------------------------------- 
+  #--------------------------------------------------------------------------
   def shift_draw_up
     if @first_draw_index == 0
       if @wait_count <= 0
@@ -817,10 +817,10 @@ class Window_TurnOrder < Window_Base
       #refresh
       @drawing_up = true
     end
-  end    
+  end
   #--------------------------------------------------------------------------
   # * Shift Draw Down
-  #-------------------------------------------------------------------------- 
+  #--------------------------------------------------------------------------
   def shift_draw_down
     if @first_draw_index == 10
       if @wait_count <= 0
@@ -861,7 +861,7 @@ class Window_TurnOrder < Window_Base
   rescue Errno::ENOENT
     rect = Rect.new(x, y, 32, 48)
     self.contents.fill_rect(rect, Mobius::Charge_Turn_Battle::MISSING_GRAPHIC_COLOR)
-  end  
+  end
   #--------------------------------------------------------------------------
   # * Draw Enemy Graphic
   #     x     : draw spot x-coordinate
@@ -933,7 +933,7 @@ class Arrow_All_Base
       battler = @battlers[i]
       arrow.x = battler.screen_x
       arrow.y = battler.screen_y
-    end  
+    end
   end
   #--------------------------------------------------------------------------
   # * Set Help Window
@@ -1656,7 +1656,7 @@ class Scene_Battle
     if @item_window != nil
       # Hide turn order window
       @turn_order_window.visible = false
-    end 
+    end
   end
   #--------------------------------------------------------------------------
   # * Start All Enemy Selection
@@ -1696,7 +1696,7 @@ class Scene_Battle
     if @item_window != nil
       # Hide turn order window
       @turn_order_window.visible = false
-    end 
+    end
   end
   #--------------------------------------------------------------------------
   # * Start Actor Selection
@@ -1728,7 +1728,7 @@ class Scene_Battle
     if @item_window != nil
       # Hide turn order window
       @turn_order_window.visible = false
-    end 
+    end
   end
   #--------------------------------------------------------------------------
   # * Start All Actor Selection
@@ -1768,7 +1768,7 @@ class Scene_Battle
     if @item_window != nil
       # Hide turn order window
       @turn_order_window.visible = false
-    end 
+    end
   end
   #--------------------------------------------------------------------------
   # * Start Skill Selection
@@ -1927,15 +1927,15 @@ class Scene_Battle
     @actor_command_window.visible = false
     # Set main phase flag
     $game_temp.battle_main_phase = true
-  
-    # Make enemy action -- Moved to start_phase2, and only runs one 
+
+    # Make enemy action -- Moved to start_phase2, and only runs one
     # enemy at a time
     #  for enemy in $game_troop.enemies
     #    enemy.make_action
     #  end
     # Make action orders -- Mobius: No longer used
     # make_action_orders
-  
+
     # Shift to step 1
     @phase4_step = 1
   end
@@ -1971,7 +1971,7 @@ end
 #------------------------------------------------------------------------------
 #  Add one new concept to the Game_Party class
 #    @scan_list
-#      This is a list of enemy IDs that have been scanned by the party. 
+#      This is a list of enemy IDs that have been scanned by the party.
 #      This list is used by the beastiary to show only scanned enemies.
 #==============================================================================
 class Game_Party
@@ -2003,7 +2003,7 @@ end
 #==============================================================================
 # ** Mobius
 #------------------------------------------------------------------------------
-#  This module is a collection of various, random methods that don't fit 
+#  This module is a collection of various, random methods that don't fit
 #  anywhere else, and need to be able to be called from anywhere.
 #
 #  Usage:
@@ -2066,7 +2066,7 @@ class Window_Base < Window
     width_sum = 0
     icon_bitmaps.each do |bitmap|
       # draw icon centered in height but as wide as it is
-      w = bitmap.width 
+      w = bitmap.width
       ch = bitmap.height / 2
       src_rect = Rect.new(0, ch - 16, w, 32)
       # only draw next icon if it'll fit
@@ -2074,13 +2074,13 @@ class Window_Base < Window
         self.contents.blt(x + width_sum, y, bitmap, src_rect)
         # add padding of 1 pixel to separate icons
         width_sum += (w + 1)
-      else 
+      else
         break
       end
-    end    
+    end
   end
   #--------------------------------------------------------------------------
-  # * Get Status Icon Bitmaps - Takes a Game_Battler and returns an array of 
+  # * Get Status Icon Bitmaps - Takes a Game_Battler and returns an array of
   #   bitmaps for drawing their current statuses
   #--------------------------------------------------------------------------
   def get_status_icon_bitmaps(battler)
@@ -2092,7 +2092,7 @@ class Window_Base < Window
         # load icon bitmap
         bitmap = get_status_icon_bitmap(id)
         # store in temp array
-        icon_bitmaps.push(bitmap)      
+        icon_bitmaps.push(bitmap)
       end
     end
     return icon_bitmaps
@@ -2117,7 +2117,7 @@ class Window_Base < Window
       bitmap.fill_rect(rect, color)
       return bitmap
   end
-    
+
 end
 
 #==============================================================================
@@ -2210,7 +2210,7 @@ class Window_BeastList < Window_Selectable
       x = 4 + i % @column_max * ( width / @column_max)
       y = i / @column_max * 32
       self.contents.draw_text(x, y, ( width / @column_max), 32, name)
-    end      
+    end
   end
   #--------------------------------------------------------------------------
   # * Get Enemy
@@ -2218,7 +2218,7 @@ class Window_BeastList < Window_Selectable
   def enemy
     return $data_enemies[@data[self.index]]
   end
-  
+
 end
 
 #==============================================================================
@@ -2305,7 +2305,7 @@ class Window_BeastDetail < Window_Base
       @selected = false
     end
     self.contents = Bitmap.new(width - 32, height - 32)
-    refresh    
+    refresh
   end
   #--------------------------------------------------------------------------
   # * Make Sub Windows - Creates the three sub windows
@@ -2362,7 +2362,7 @@ class Window_BeastDetail < Window_Base
     self.contents.fill_rect(0, 32, contents.width, 1, color)
     # Draw divider lines
     self.contents.fill_rect(203, 32 + 4, 1, 288, color)
-    self.contents.fill_rect(404, 32 + 4, 1, 288, color)  
+    self.contents.fill_rect(404, 32 + 4, 1, 288, color)
   end
   #--------------------------------------------------------------------------
   # * Dispose
@@ -2485,7 +2485,7 @@ class Window_BeastSubDetail < Window_Selectable
     self.contents = Bitmap.new(width - 32, @item_max * 32)
     w = self.contents.width - (2 * padding)
     # draw all stats
-    for i in 0..9 
+    for i in 0..9
       draw_enemy_parameter(@enemy, padding, i * 32, w, 32, i)
     end
   end
@@ -2503,31 +2503,31 @@ class Window_BeastSubDetail < Window_Selectable
     when 0
       parameter_name = $data_system.words.hp
       parameter_value = enemy.maxhp
-    when 1 
+    when 1
       parameter_name = $data_system.words.sp
       parameter_value = enemy.maxsp
-    when 2 
+    when 2
       parameter_name = $data_system.words.atk
       parameter_value = enemy.atk
-    when 3 
+    when 3
       parameter_name = $data_system.words.pdef
       parameter_value = enemy.pdef
-    when 4 
+    when 4
       parameter_name = $data_system.words.mdef
       parameter_value = enemy.mdef
-    when 5 
+    when 5
       parameter_name = $data_system.words.str
       parameter_value = enemy.str
-    when 6 
+    when 6
       parameter_name = $data_system.words.dex
       parameter_value = enemy.dex
-    when 7 
+    when 7
       parameter_name = $data_system.words.agi
       parameter_value = enemy.agi
-    when 8 
+    when 8
       parameter_name = $data_system.words.int
       parameter_value = enemy.int
-    when 9 
+    when 9
       parameter_name = Mobius::Charge_Turn_Battle::BEASTIARY_EVASION_WORD
       parameter_value = enemy.eva
     end
@@ -2714,7 +2714,7 @@ class Scene_Beastiary
       end
     end
   end
-  
+
 end
 
 #=========================BEASTIARY EXPANSION END==============================
