@@ -8,7 +8,8 @@ Release Notes
 v. 1.0    Initial Release  
 v. 1.1    Customizable Turn Icons  
 v. 1.2    Beastiary Expansion Added  
- 
+v. 1.3    Clean up code and reformat  
+  
 Introduction  
 This script overhauls the default battle system and replaces it with a "CTB" system similar to Final Fantasy Tactics and Final Fantasy X. 
 Battlers now use their speed to charge up a hidden turn gauge, and when it's full, they get a turn immediately. 
