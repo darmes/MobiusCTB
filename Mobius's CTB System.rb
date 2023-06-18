@@ -2193,12 +2193,6 @@ class Window_BeastList < Window_Selectable
     # called in super @index = -1
   end
   #--------------------------------------------------------------------------
-  # * update
-  #--------------------------------------------------------------------------
-  def update
-    super
-  end
-  #--------------------------------------------------------------------------
   # * refresh
   #--------------------------------------------------------------------------
   def refresh
@@ -2256,20 +2250,17 @@ class Window_BeastSprite < Window_Base
       draw_bitmap_centered(enemy_bitmap, rect)
     end
     return
-    # If filename can't be found, use default battler sprite
-    rescue Errno::ENOENT
-      enemy_bitmap = RPG::Cache.battler(@enemy.battler_name, 
-                         @enemy.battler_hue)
-      rect = Rect.new(x, y, contents.width, contents.height)
-      draw_bitmap_centered(enemy_bitmap, rect)
+  # If filename can't be found, use default battler sprite
+  rescue Errno::ENOENT
+    enemy_bitmap = RPG::Cache.battler(@enemy.battler_name, @enemy.battler_hue)
+    rect = Rect.new(x, y, contents.width, contents.height)
+    draw_bitmap_centered(enemy_bitmap, rect)
   end
   #--------------------------------------------------------------------------
   # * Set Enemy - Calls refresh as needed
   #--------------------------------------------------------------------------
   def enemy=(new_enemy)
-    if @enemy == new_enemy
-      return
-    else
+    if @enemy != new_enemy
       @enemy = new_enemy
       refresh
     end
@@ -2278,7 +2269,7 @@ class Window_BeastSprite < Window_Base
   # * Get Filename - Returns filename for sprite
   #--------------------------------------------------------------------------
   def get_filename
-    return @enemy.base_name + Mobius::Charge_Turn_Battle::BEASTIARY_SPRITE_SUFFIX     
+    return @enemy.base_name + Mobius::Charge_Turn_Battle::BEASTIARY_SPRITE_SUFFIX
   end
 end
 
@@ -2313,7 +2304,7 @@ class Window_BeastDetail < Window_Base
       self.visible = true
       @selected = false
     end
-    self.contents = Bitmap.new(width - 32, height - 32)        
+    self.contents = Bitmap.new(width - 32, height - 32)
     refresh    
   end
   #--------------------------------------------------------------------------
@@ -2334,23 +2325,23 @@ class Window_BeastDetail < Window_Base
   #--------------------------------------------------------------------------
   def update
     super
-  # Update each sub window
-  @sub_windows.each {|window| window.update}
-  # Input handling
-  if @selected
-    # Move focus left
-    if Input.trigger?(Input::LEFT)
-      @sub_windows[@sub_window_index].active = false
-      @sub_window_index = (@sub_window_index - 1) % 3
-      @sub_windows[@sub_window_index].active = true
+    # Update each sub window
+    @sub_windows.each {|window| window.update}
+    # Input handling
+    if @selected
+      # Move focus left
+      if Input.trigger?(Input::LEFT)
+        @sub_windows[@sub_window_index].active = false
+        @sub_window_index = (@sub_window_index - 1) % 3
+        @sub_windows[@sub_window_index].active = true
+      end
+      # Move focus right
+      if Input.trigger?(Input::RIGHT)
+        @sub_windows[@sub_window_index].active = false
+        @sub_window_index = (@sub_window_index + 1) % 3
+        @sub_windows[@sub_window_index].active = true
+      end
     end
-    # Move focus right
-    if Input.trigger?(Input::RIGHT)
-      @sub_windows[@sub_window_index].active = false
-      @sub_window_index = (@sub_window_index + 1) % 3
-      @sub_windows[@sub_window_index].active = true
-    end
-  end
   end
   #--------------------------------------------------------------------------
   # * refresh
@@ -2363,32 +2354,30 @@ class Window_BeastDetail < Window_Base
     return if @enemy == nil
     # Create empty contents
     self.contents = Bitmap.new(width - 32, height - 32)
-  # Get color
-  color = Mobius::Charge_Turn_Battle::BEASTIARY_DIVIDER_LINE_COLOR
+    # Get color
+    color = Mobius::Charge_Turn_Battle::BEASTIARY_DIVIDER_LINE_COLOR
     # Draw name
     self.contents.draw_text(0, 0, contents.width, 32, @enemy.name, 1)
-  # Draw header line
+    # Draw header line
     self.contents.fill_rect(0, 32, contents.width, 1, color)
-  # Draw divider lines
-  self.contents.fill_rect(203, 32 + 4, 1, 288, color)
-  self.contents.fill_rect(404, 32 + 4, 1, 288, color)  
+    # Draw divider lines
+    self.contents.fill_rect(203, 32 + 4, 1, 288, color)
+    self.contents.fill_rect(404, 32 + 4, 1, 288, color)  
   end
   #--------------------------------------------------------------------------
   # * Dispose
   #--------------------------------------------------------------------------
   def dispose
-  super
-  @sub_windows.each {|window| window.dispose}
+    super
+    @sub_windows.each {|window| window.dispose}
   end
   #--------------------------------------------------------------------------
   # * Set Enemy - Calls refresh as needed
   #--------------------------------------------------------------------------
   def enemy=(enemy)
-    if @enemy == enemy
-      return
-    else
+    if @enemy != enemy
       @enemy = enemy
-    @sub_windows.each {|window| window.enemy = enemy}
+      @sub_windows.each {|window| window.enemy = enemy}
       refresh
     end
   end
@@ -2396,24 +2385,20 @@ class Window_BeastDetail < Window_Base
   # * Set selected - Selects this window, thereby activating/deactivating sub windows
   #--------------------------------------------------------------------------
   def selected=(boolean)
-  if @selected = boolean
-    @sub_windows[@sub_window_index].active = true
-  else
-    @sub_windows.each {|window| window.active = false}
-  end
+    if @selected == boolean
+      @sub_windows[@sub_window_index].active = true
+    else
+      @sub_windows.each {|window| window.active = false}
+    end
   end
   #--------------------------------------------------------------------------
   # * Set visible - Changes visibility for self and sub windows
   #--------------------------------------------------------------------------
   alias old_visible= visible=
   def visible=(boolean)
-  self.old_visible = boolean
-  if self.visible
-    @sub_windows.each {|window| window.visible = true}
-  else
-    @sub_windows.each {|window| window.visible = false}
+    self.old_visible = boolean
+    @sub_windows.each {|window| window.visible = boolean}
   end
-  end  
 end
 
 #==============================================================================
@@ -2484,9 +2469,7 @@ class Window_BeastSubDetail < Window_Selectable
   # * Set Enemy - Calls refresh as needed
   #--------------------------------------------------------------------------
   def enemy=(enemy)
-    if @enemy == enemy
-      return
-    else
+    if @enemy != enemy
       @enemy = enemy
       refresh
     end
@@ -2676,7 +2659,7 @@ class Scene_Beastiary
     # Make windows
     @Window_BeastList = Window_BeastList.new
     @Window_BeastDetail = Window_BeastDetail.new
-  @Window_BeastSprite = Window_BeastSprite.new
+    @Window_BeastSprite = Window_BeastSprite.new
     # Execute transition
     Graphics.transition
     # Main loop
@@ -2697,7 +2680,7 @@ class Scene_Beastiary
     # Dispose of windows
     @Window_BeastList.dispose
     @Window_BeastDetail.dispose
-  @Window_BeastSprite.dispose
+    @Window_BeastSprite.dispose
   end
   #--------------------------------------------------------------------------
   # * update
@@ -2705,31 +2688,31 @@ class Scene_Beastiary
   def update
   # Set enemy in windows
     @Window_BeastDetail.enemy = @Window_BeastList.enemy
-  @Window_BeastSprite.enemy = @Window_BeastList.enemy
-  # Call update
+    @Window_BeastSprite.enemy = @Window_BeastList.enemy
+    # Call update
     @Window_BeastList.update
     @Window_BeastDetail.update
-  @Window_BeastSprite.update
-  # Input handling
-  if @Window_BeastDetail.selected
-    # When cancel
-    if Input.trigger?(Input::B)
-      @Window_BeastDetail.selected = false
-      @Window_BeastList.active = true
+    @Window_BeastSprite.update
+    # Input handling
+    if @Window_BeastDetail.selected
+      # When cancel
+      if Input.trigger?(Input::B)
+        @Window_BeastDetail.selected = false
+        @Window_BeastList.active = true
+      end
+    else
+      # When cancel
+      if Input.trigger?(Input::B)
+        # Play cancel SE
+        $game_system.se_play($data_system.cancel_se)
+        $scene = Scene_Menu.new()
+      end
+      # When enter
+      if Input.trigger?(Input::C)
+        @Window_BeastDetail.selected = true
+        @Window_BeastList.active = false
+      end
     end
-  else
-    # When cancel
-    if Input.trigger?(Input::B)
-      # Play cancel SE
-      $game_system.se_play($data_system.cancel_se)
-      $scene = Scene_Menu.new()
-    end
-    # When enter
-    if Input.trigger?(Input::C)
-      @Window_BeastDetail.selected = true
-      @Window_BeastList.active = false
-    end
-  end
   end
   
 end
@@ -2743,7 +2726,7 @@ end
 module RPG
   class Enemy
     alias base_name name
-  end    
+  end
 end
 #==============================================================================
 # ** RPG::Cache changes
