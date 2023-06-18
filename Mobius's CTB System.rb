@@ -1050,17 +1050,17 @@ class Scene_Battle
     @party_command_window = Window_PartyCommand.new
     @help_window = Window_Help.new
     #@help_window.back_opacity = 160
-  @help_window.back_opacity = 230
-  @help_window.z = 200
+    @help_window.back_opacity = 230
+    @help_window.z = 200
     @help_window.visible = false
     @status_window = Window_BattleStatus.new
     @message_window = Window_Message.new
     @turn_order_window = Window_TurnOrder.new #Mobius Added
     all_battlers = [].concat($game_party.actors).concat($game_troop.enemies)
     @big_status_window = Window_BigBattleStatus.new(all_battlers)
-  if Mobius::Charge_Turn_Battle::BEASTIARY
-    @enemy_detail_window = Window_BeastDetail.new(nil, true) #Mobius Added
-  end
+    if Mobius::Charge_Turn_Battle::BEASTIARY
+      @enemy_detail_window = Window_BeastDetail.new(nil, true) #Mobius Added
+    end
     # Make sprite set
     @spriteset = Spriteset_Battle.new
     # Initialize wait count
@@ -1099,9 +1099,9 @@ class Scene_Battle
     @message_window.dispose
     @turn_order_window.dispose # Mobius Added
     @big_status_window.dispose # Mobius
-  if Mobius::Charge_Turn_Battle::BEASTIARY
-    @enemy_detail_window.dispose # Mobius
-  end
+    if Mobius::Charge_Turn_Battle::BEASTIARY
+      @enemy_detail_window.dispose # Mobius
+    end
     if @skill_window != nil
       @skill_window.dispose
     end
@@ -1124,7 +1124,6 @@ class Scene_Battle
       $scene = nil
     end
   end
-
   #--------------------------------------------------------------------------
   # * Frame Update
   #--------------------------------------------------------------------------
@@ -1135,32 +1134,18 @@ class Scene_Battle
     end
     mobius_update
   end
-end
-
-#==============================================================================
-# ** Scene_Battle (part 2)
-#------------------------------------------------------------------------------
-#  This class performs battle screen processing.
-#==============================================================================
-
-class Scene_Battle
   #--------------------------------------------------------------------------
   # * Start Party Command Phase
   #--------------------------------------------------------------------------
+  alias mobius_ctb_start_phase2 start_phase2
   def start_phase2
-    # Shift to phase 2
-    @phase = 2
-    # Increase Turn Count
-    $game_temp.battle_turn += 1
-    # Set actor to non-selecting
-    @actor_index = -1
-    @active_battler = nil
+    mobius_ctb_start_phase2
     @action_battlers = []
     # Disable actor command window
     @actor_command_window.active = false
     @actor_command_window.visible = false
-    # Clear main phase flag
-    $game_temp.battle_main_phase = false
+    # Increase Turn Count
+    $game_temp.battle_turn += 1
     # Make new array of current battlers
     @current_battlers = []
     for enemy in $game_troop.enemies
@@ -1171,7 +1156,7 @@ class Scene_Battle
     end
   end
   #--------------------------------------------------------------------------
-  # * Battler Charged -- Mobius
+  # * Battler Charged
   #--------------------------------------------------------------------------
   def battler_charged?
     for battler in @current_battlers
@@ -1183,15 +1168,14 @@ class Scene_Battle
   # * Frame Update (party command phase)
   #--------------------------------------------------------------------------
   def update_phase2
-    #charge all the battlers until someone gets an active turn
+    # Charge all the battlers until someone gets an active turn
     until battler_charged?
       for battler in @current_battlers
         battler.charge
       end
     end
     #set the active battler to the fastest
-    @active_battler = 
-    @current_battlers.max {|a,b| a.charge_gauge <=> b.charge_gauge}
+    @active_battler = @current_battlers.max {|a,b| a.charge_gauge <=> b.charge_gauge}
     # Remove appropiate states automatically
     @active_battler.remove_states_auto_start
     # Refresh Battle Status window
@@ -1201,9 +1185,8 @@ class Scene_Battle
       @active_battler.make_action
       start_phase4
     else #if it's an actor
-      start_phase3      
+      start_phase3
     end
-    return
   end
   #--------------------------------------------------------------------------
   # * Frame Update (party command phase: escape)
@@ -1249,16 +1232,6 @@ class Scene_Battle
       start_phase4
     end
   end
-
-end
-
-#==============================================================================
-# ** Scene_Battle (part 3)
-#------------------------------------------------------------------------------
-#  This class performs battle screen processing.
-#==============================================================================
-
-class Scene_Battle
   #--------------------------------------------------------------------------
   # * Start Actor Command Phase
   #--------------------------------------------------------------------------
@@ -1277,19 +1250,19 @@ class Scene_Battle
   # * Frame Update (actor command phase)
   #--------------------------------------------------------------------------
   def update_phase3
-    # If enemy detail is enabled      -- Mobius
+    # If enemy detail is enabled
     if @enemy_detail_window != nil and @enemy_detail_window.visible
       update_enemy_detail_window
     # If enemy arrow is enabled
     elsif @enemy_arrow != nil
       update_phase3_enemy_select
-    # If all enemy arrow is enabled   -- Mobius
+    # If all enemy arrow is enabled
     elsif @all_enemy_arrow != nil
       update_phase3_all_enemy_select
     # If actor arrow is enabled
     elsif @actor_arrow != nil
       update_phase3_actor_select
-    # If all actor arrow is enabled   -- Mobius
+    # If all actor arrow is enabled
     elsif @all_actor_arrow != nil
       update_phase3_all_actor_select
     # If skill window is enabled
@@ -1298,7 +1271,7 @@ class Scene_Battle
     # If item window is enabled
     elsif @item_window != nil
       update_phase3_item_select
-    # If turn order window is up       -- Mobius
+    # If turn order window is up
     elsif @big_status_window.visible
       update_big_status_window
     # If actor command window is enabled
@@ -1368,7 +1341,6 @@ class Scene_Battle
         # Escape processing
         update_phase2_escape
       end
-      return
     end
   end
   #--------------------------------------------------------------------------
@@ -1493,25 +1465,25 @@ class Scene_Battle
   def update_phase3_enemy_select
     # Update enemy arrow
     @enemy_arrow.update
-  # If Beastiary is added
-  if Mobius::Charge_Turn_Battle::BEASTIARY
-    # If Beastiary access button is pressed
-    if Input.trigger?(Input::BEASTIARY_BATTLE_ACCESS_BUTTON)
-      # Set enemy
-      enemy = @enemy_arrow.enemy
-      # If enemy has been scanned -- Mobius added
-      if enemy.state?(Mobius::Charge_Turn_Battle::SCAN_STATE_ID)
-      # Play decision SE
-      $game_system.se_play($data_system.decision_se)
-      # Start turn order window
-      start_enemy_detail_window(enemy)
-      return
-      else
-      # Play buzzer SE
-      $game_system.se_play($data_system.buzzer_se)
+    # If Beastiary is added
+    if Mobius::Charge_Turn_Battle::BEASTIARY
+      # If Beastiary access button is pressed
+      if Input.trigger?(Input::BEASTIARY_BATTLE_ACCESS_BUTTON)
+        # Set enemy
+        enemy = @enemy_arrow.enemy
+        # If enemy has been scanned
+        if enemy.state?(Mobius::Charge_Turn_Battle::SCAN_STATE_ID)
+          # Play decision SE
+          $game_system.se_play($data_system.decision_se)
+          # Start enemy detail window
+          start_enemy_detail_window(enemy)
+          return
+        else
+          # Play buzzer SE
+          $game_system.se_play($data_system.buzzer_se)
+        end
       end
     end
-  end
     # If B button was pressed
     if Input.trigger?(Input::B)
       # Play cancel SE
@@ -1538,12 +1510,12 @@ class Scene_Battle
         # End item selection
         end_item_select
       end
-      # Go to command input for next actor
+      # Execute action
       start_phase4
     end
   end
   #--------------------------------------------------------------------------
-  # * Frame Update (actor command phase : all enemy selection) - MOBIUS
+  # * Frame Update (actor command phase : all enemy selection)
   #--------------------------------------------------------------------------
   def update_phase3_all_enemy_select
     # Update enemy arrow
@@ -1572,7 +1544,7 @@ class Scene_Battle
         # End item selection
         end_item_select
       end
-      # Go to command input for next actor
+      # Execute action
       start_phase4
     end
   end
@@ -1608,12 +1580,12 @@ class Scene_Battle
         # End item selection
         end_item_select
       end
-      # Go to command input for next actor
+      # Execute action
       start_phase4
     end
   end
   #--------------------------------------------------------------------------
-  # * Frame Update (actor command phase : all actor selection) - MOBIUS
+  # * Frame Update (actor command phase : all actor selection)
   #--------------------------------------------------------------------------
   def update_phase3_all_actor_select
     # Update enemy arrow
@@ -1642,7 +1614,7 @@ class Scene_Battle
         # End item selection
         end_item_select
       end
-      # Go to command input for next actor
+      # Execute action
       start_phase4
     end
   end
@@ -1687,7 +1659,7 @@ class Scene_Battle
     end 
   end
   #--------------------------------------------------------------------------
-  # * Start All Enemy Selection - MOBIUS
+  # * Start All Enemy Selection
   #--------------------------------------------------------------------------
   def start_all_enemy_select
     # Make enemy arrow
@@ -1700,7 +1672,7 @@ class Scene_Battle
     @turn_order_window.visible = true
   end
   #--------------------------------------------------------------------------
-  # * End All Enemy Selection - MOBIUS
+  # * End All Enemy Selection
   #--------------------------------------------------------------------------
   def end_all_enemy_select
     # Dispose of enemy arrow
@@ -1759,7 +1731,7 @@ class Scene_Battle
     end 
   end
   #--------------------------------------------------------------------------
-  # * Start All Actor Selection - MOBIUS
+  # * Start All Actor Selection
   #--------------------------------------------------------------------------
   def start_all_actor_select
     # Make actor arrow
@@ -1772,7 +1744,7 @@ class Scene_Battle
     @turn_order_window.visible = true
   end
   #--------------------------------------------------------------------------
-  # * End All Actor Selection - MOBIUS
+  # * End All Actor Selection
   #--------------------------------------------------------------------------
   def end_all_actor_select
     # Dispose of enemy arrow
@@ -1853,7 +1825,7 @@ class Scene_Battle
     @turn_order_window.visible = true
   end
   #--------------------------------------------------------------------------
-  # * Start Big Status Window -- Mobius
+  # * Start Big Status Window
   #--------------------------------------------------------------------------
   def start_big_status_window
     @big_status_window.refresh
@@ -1863,7 +1835,7 @@ class Scene_Battle
     @turn_order_window.visible = false
   end
   #--------------------------------------------------------------------------
-  # * Update Big Status Window -- Mobius
+  # * Update Big Status Window
   #--------------------------------------------------------------------------
   def update_big_status_window
     @big_status_window.update
@@ -1875,7 +1847,7 @@ class Scene_Battle
     end
   end
   #--------------------------------------------------------------------------
-  # * End Big Status Window -- Mobius
+  # * End Big Status Window
   #--------------------------------------------------------------------------
   def end_big_status_window
     @big_status_window.visible = false
@@ -1885,7 +1857,7 @@ class Scene_Battle
     @actor_command_window.visible = true
   end
   #--------------------------------------------------------------------------
-  # * Start Enemy Detail Window -- Mobius
+  # * Start Enemy Detail Window
   #--------------------------------------------------------------------------
   def start_enemy_detail_window(enemy)
     # Set enemy detail window's enemy
@@ -1899,7 +1871,7 @@ class Scene_Battle
     @help_window.visible = false
   end
   #--------------------------------------------------------------------------
-  # * Update Enemy Detail Window -- Mobius
+  # * Update Enemy Detail Window
   #--------------------------------------------------------------------------
   def update_enemy_detail_window
      @enemy_detail_window.update
@@ -1911,7 +1883,7 @@ class Scene_Battle
      end
   end
   #--------------------------------------------------------------------------
-  # * End Enemy Detail Window -- Mobius
+  # * End Enemy Detail Window
   #--------------------------------------------------------------------------
   def end_enemy_detail_window
     # Hide enemy detail window
@@ -1921,15 +1893,6 @@ class Scene_Battle
     # Show help window
     @help_window.visible = true
   end
-end
-
-#==============================================================================
-# ** Scene_Battle (part 4) 
-#------------------------------------------------------------------------------
-#  This class performs battle screen processing.
-#==============================================================================
-
-class Scene_Battle
   #--------------------------------------------------------------------------
   # * Start Main Phase
   #--------------------------------------------------------------------------
@@ -1939,9 +1902,9 @@ class Scene_Battle
     @active_battler.blink = false
     @active_battler.charge_reset
     @action_battlers.push(@active_battler)
-    # Turn count #MOBIUS: enemies won't attack on "turn 0"
-    # Moved to start_phase2 so that enemies can take their first turn
-    # $game_temp.battle_turn += 1 
+    # Enemies won't attack on "turn 0" so I moved the turn count increment
+    # to start_phase2 so that enemies can take their first turn
+    # $game_temp.battle_turn += 1
 
     # Search all battle event pages
     for index in 0...$data_troops[@troop_id].pages.size
@@ -1965,8 +1928,8 @@ class Scene_Battle
     # Set main phase flag
     $game_temp.battle_main_phase = true
   
-    # Make enemy action -- Mobius: Moved to start_phase2, and only runs one 
-  # enemy at a time
+    # Make enemy action -- Moved to start_phase2, and only runs one 
+    # enemy at a time
     #  for enemy in $game_troop.enemies
     #    enemy.make_action
     #  end
@@ -1980,8 +1943,8 @@ class Scene_Battle
   # * Make Basic Action Results
   #--------------------------------------------------------------------------
   alias mobius_make_basic_action_result make_basic_action_result
-  def make_basic_action_result    
-    # If guard -- MOBIUS VERSION
+  def make_basic_action_result
+    # If guard
     if @active_battler.current_action.basic == 1
       # Display "Guard" in help window
       @help_window.set_text($data_system.words.guard, 1)
@@ -1997,7 +1960,7 @@ class Scene_Battle
       @active_battler.escape
       return
     end
-  mobius_make_basic_action_result
+    mobius_make_basic_action_result
   end
 
 end
@@ -2185,8 +2148,7 @@ class Window_Help < Window_Base
   end
 
 end
-# If STATUS_ICONS end
-end
+end # If STATUS_ICONS end
 #==========================STATUS ICONS EXPANSION END==========================
 
 
