@@ -1174,7 +1174,7 @@ class Scene_Battle
         battler.charge
       end
     end
-    #set the active battler to the fastest
+    # Set the active battler to the fastest
     @active_battler = @current_battlers.max {|a,b| a.charge_gauge <=> b.charge_gauge}
     # Remove appropiate states automatically
     @active_battler.remove_states_auto_start
@@ -1897,7 +1897,7 @@ class Scene_Battle
     # Set actor as unselectable
     @actor_index = -1
     @active_battler = nil
-    # Enable party command window
+    # Disable party command window
     @party_command_window.active = false
     @party_command_window.visible = false
     # Disable actor command window
