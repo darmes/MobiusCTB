@@ -1137,13 +1137,18 @@ class Scene_Battle
   #--------------------------------------------------------------------------
   # * Start Party Command Phase
   #--------------------------------------------------------------------------
-  alias mobius_ctb_start_phase2 start_phase2
   def start_phase2
-    mobius_ctb_start_phase2
+    # Shift to phase 2
+    @phase = 2
+    # Set actor to non-selecting
+    @actor_index = -1
+    @active_battler = nil
     @action_battlers = []
     # Disable actor command window
     @actor_command_window.active = false
     @actor_command_window.visible = false
+    # Clear main phase flag
+    $game_temp.battle_main_phase = false
     # Increase Turn Count
     $game_temp.battle_turn += 1
     # Make new array of current battlers
