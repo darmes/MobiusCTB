@@ -1800,28 +1800,17 @@ class Scene_Battle
   #--------------------------------------------------------------------------
   # * Start Item Selection
   #--------------------------------------------------------------------------
+  alias mobius_ctb_start_item_select start_item_select
   def start_item_select
-    # Make item window
-    @item_window = Window_Item.new
-    # Associate help window
-    @item_window.help_window = @help_window
-    # Disable actor command window
-    @actor_command_window.active = false
-    @actor_command_window.visible = false
+    mobius_ctb_start_item_select
     @turn_order_window.visible = false
   end
   #--------------------------------------------------------------------------
   # * End Item Selection
   #--------------------------------------------------------------------------
+  alias mobius_ctb_end_item_select end_item_select
   def end_item_select
-    # Dispose of item window
-    @item_window.dispose
-    @item_window = nil
-    # Hide help window
-    @help_window.visible = false
-    # Enable actor command window
-    @actor_command_window.active = true
-    @actor_command_window.visible = true
+    mobius_ctb_end_item_select
     @turn_order_window.visible = true
   end
   #--------------------------------------------------------------------------
