@@ -1773,28 +1773,17 @@ class Scene_Battle
   #--------------------------------------------------------------------------
   # * Start Skill Selection
   #--------------------------------------------------------------------------
+  alias mobius_ctb_start_skill_select start_skill_select
   def start_skill_select
-    # Make skill window
-    @skill_window = Window_Skill.new(@active_battler)
-    # Associate help window
-    @skill_window.help_window = @help_window
-    # Disable actor command window
-    @actor_command_window.active = false
-    @actor_command_window.visible = false
+    mobius_ctb_start_skill_select
     @turn_order_window.visible = false
   end
   #--------------------------------------------------------------------------
   # * End Skill Selection
   #--------------------------------------------------------------------------
+  alias mobius_ctb_end_skill_select end_skill_select
   def end_skill_select
-    # Dispose of skill window
-    @skill_window.dispose
-    @skill_window = nil
-    # Hide help window
-    @help_window.visible = false
-    # Enable actor command window
-    @actor_command_window.active = true
-    @actor_command_window.visible = true
+    mobius_ctb_end_skill_select
     @turn_order_window.visible = true
   end
   #--------------------------------------------------------------------------
