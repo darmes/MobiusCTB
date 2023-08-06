@@ -1289,7 +1289,7 @@ class Scene_Battle
   #--------------------------------------------------------------------------
   def update_phase3_basic_command
     # If shift is pressed
-    if Input.trigger?(Input::A)
+    if Input.trigger?(Input::BATTLE_STATUS_ACCESS_BUTTON)
       # Play decision SE
       $game_system.se_play($data_system.decision_se)
       # Start turn order window
