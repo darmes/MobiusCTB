@@ -54,7 +54,6 @@ class Window_BeastList < Window_Selectable
       enemy_id_text = ""
     end
     enemy_name = $game_party.scan_list.include?(enemy_id) ? enemy.name : "???"
-    enemy_name = enemy.name # TODO: Remove
     text = enemy_id_text + enemy_name
     self.contents.draw_text(rect, text)
   end

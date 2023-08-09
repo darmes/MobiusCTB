@@ -84,8 +84,7 @@ class Scene_Beastiary
   def update_list
     enemy = @Window_BeastList.enemy
     # Set enemy in windows if the party has scanned it
-    # TODO: Remove the true!
-    if true || $game_party.scan_list.include?(enemy.id)
+    if $game_party.scan_list.include?(enemy.id)
       @Window_BeastSprite.enemy = enemy
       @Window_BeastStats.enemy = enemy
       @Window_BeastElements.enemy = enemy
