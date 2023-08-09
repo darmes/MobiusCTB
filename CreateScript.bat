@@ -38,5 +38,5 @@ copy "%~dp0Source\Header.rb" + ^
      "%~dp0Source\Beastiary\Windows\Window_BeastSubDetail.rb" + ^
      "%~dp0Source\Beastiary\Scene_Beastiary.rb" + ^
      "%~dp0Source\Beastiary\Footer.rb" + ^
-     "%~dp0Source\RGSS\RGSS.rb"
+     "%~dp0Source\RGSS\RGSS.rb" ^
      "%~dp0Mobius's CTB System.rb" /b /y

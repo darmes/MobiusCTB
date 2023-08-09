@@ -170,18 +170,16 @@ module Mobius
     # Lastly, you don't need to worry about this if you've set the above option to false.
     ENEMY_BOSS_PREFIX = "Boss: "
   end
-
-  #==============================================================================
-  # ** EXPANSION SETTINGS
-  #------------------------------------------------------------------------------
-  # The following settings are all optional, and are only used with the expansions
-  # to the core script.
-  #==============================================================================
-
+end
+#==============================================================================
+# ** SCAN SKILL SETTINGS
+#------------------------------------------------------------------------------
+# The following settings are all optional, and are only used with the expansions
+# to the core script.
+#==============================================================================
+module Mobius
   module Scan_Skill
     #==============================================================================
-    # ** SCAN SKILL SETTINGS
-    #------------------------------------------------------------------------------
     # Because this battle system is designed to more tactical than the default system, a
     # scan skill is basically a necessity to allow you to track an enemy's HP/SP.
     # To set this up, first create a skill to perform scan in the database. Second,
@@ -198,11 +196,16 @@ module Mobius
     # you created earlier, and you're done!
     #==============================================================================
   end
-
+end
+#==============================================================================
+# ** STATUS_ICONS SETTINGS
+#------------------------------------------------------------------------------
+# The following settings are all optional, and are only used with the expansions
+# to the core script.
+#==============================================================================
+module Mobius
   module Status_Icons
     #==============================================================================
-    # ** STATUS_ICONS SETTINGS
-    #------------------------------------------------------------------------------
     # The STATUS_ICONS expansion will display icons in the status area for users
     # and enemies during battle rather than the default plain text. The icons can
     # be any size, but 24x24 is optimal. Anything taller than 32 pixels will have
@@ -224,11 +227,16 @@ module Mobius
     # Here you can set the path to the status icons. Note that it is local to the project folder.
     STATUS_ICON_PATH = "Graphics/Icons/"
   end
-
+end
+#==============================================================================
+# ** BEASTIARY SETTINGS
+#------------------------------------------------------------------------------
+# The following settings are all optional, and are only used with the expansions
+# to the core script.
+#==============================================================================
+module Mobius
   module Beastiary
     #==============================================================================
-    # ** BEASTIARY SETTINGS
-    #------------------------------------------------------------------------------
     # The BEASTIARY expansion has two parts - a standalone scene that a player could
     # use to review information on previous foes, and an expanded info window that
     # displays during battle similar to FFXIII. To access the standalone scene,
@@ -301,16 +309,16 @@ end
 # This section lets you customize input control settings.
 #==============================================================================
 module Input
-    # The battle system has a few additional windows that can be opened/closed/controlled
-    # during battle, and therefore need their own buttons. You can customize what
-    # those buttons are here. Remember these are not keys on the keyboard but the
-    # built-in "buttons". If you press F1 while playing, you can change what keyboard
-    # key is linked to what "button". Valid options are A, R, L, X, Y, or Z.
-    # The options should be entered with formatting (like they are below).
-    BATTLE_STATUS_ACCESS_BUTTON = A
-    BEASTIARY_BATTLE_ACCESS_BUTTON = A
-    TURN_WINDOW_DRAW_DOWN_BUTTON = R
-    TURN_WINDOW_DRAW_UP_BUTTON = L
+  # The battle system has a few additional windows that can be opened/closed/controlled
+  # during battle, and therefore need their own buttons. You can customize what
+  # those buttons are here. Remember these are not keys on the keyboard but the
+  # built-in "buttons". If you press F1 while playing, you can change what keyboard
+  # key is linked to what "button". Valid options are A, R, L, X, Y, or Z.
+  # The options should be entered with formatting (like they are below).
+  BATTLE_STATUS_ACCESS_BUTTON = A
+  BEASTIARY_BATTLE_ACCESS_BUTTON = A
+  TURN_WINDOW_DRAW_DOWN_BUTTON = R
+  TURN_WINDOW_DRAW_UP_BUTTON = L
 end
 #==============================================================================
 # ** CUSTOMIZATION END
@@ -323,7 +331,6 @@ end
 #  This section runs a check on all customization options to ensure that
 #  they are valid.
 #==============================================================================
-
 #==============================================================================
 # ** Game_Battler
 #------------------------------------------------------------------------------
@@ -457,7 +464,6 @@ class Game_Battler
     end
   end
 end
-
 #==============================================================================
 # ** Game_Enemy
 #------------------------------------------------------------------------------
@@ -499,7 +505,6 @@ class Game_Enemy < Game_Battler
     end
   end
 end
-
 #==============================================================================
 # ** Game_Party
 #------------------------------------------------------------------------------
@@ -519,7 +524,6 @@ class Game_Party
   end
 
 end
-
 #==============================================================================
 # ** Window_Base
 #------------------------------------------------------------------------------
@@ -560,7 +564,6 @@ class Window_Base < Window
   end
 
 end
-
 #==============================================================================
 # ** Window_Help
 #------------------------------------------------------------------------------
@@ -583,7 +586,6 @@ class Window_Help < Window_Base
     end
   end
 end
-
 #==============================================================================
 # ** Window_BigBattleStatus
 #------------------------------------------------------------------------------
@@ -683,7 +685,6 @@ class Window_BigBattleStatus < Window_Base
     self.contents.draw_text(x + 82, y, 70, 32, actor.maxsp.to_s, 2)
   end
 end
-
 #==============================================================================
 # ** Window_TurnOrder
 #------------------------------------------------------------------------------
@@ -908,7 +909,6 @@ class Window_TurnOrder < Window_Base
     self.contents.fill_rect(rect, Mobius::Charge_Turn_Battle::MISSING_GRAPHIC_COLOR)
   end
 end
-
 #==============================================================================
 # ** Arrow_All_Base
 #------------------------------------------------------------------------------
@@ -977,7 +977,6 @@ class Arrow_All_Base
     end
   end
 end
-
 #==============================================================================
 # ** Arrow_All_Enemy
 #------------------------------------------------------------------------------
@@ -1002,7 +1001,6 @@ class Arrow_All_Enemy < Arrow_All_Base
     end
   end
 end
-
 #==============================================================================
 # ** Arrow_All_Actor
 #------------------------------------------------------------------------------
@@ -1027,7 +1025,6 @@ class Arrow_All_Actor < Arrow_All_Base
     end
   end
 end
-
 #==============================================================================
 # ** Scene_Battle
 #------------------------------------------------------------------------------
@@ -1964,7 +1961,6 @@ class Scene_Battle
   end
 
 end
-
 #================================SCAN SKILL====================================
 #==============================================================================
 # ** Game_Party
@@ -1989,7 +1985,6 @@ class Game_Party
   end
 
 end
-
 #==============================================================================
 # ** Scene_Battle
 #------------------------------------------------------------------------------
@@ -1999,7 +1994,6 @@ class Scene_Battle
   # Use $scene.active_battler to get current actor during batttle
   attr_reader :active_battler
 end
-
 #==============================================================================
 # ** Mobius
 #------------------------------------------------------------------------------
@@ -2041,7 +2035,6 @@ module Mobius
 
 end
 #==============================SCAN SKILL END==================================
-
 
 #===========================STATUS ICONS EXPANSION=============================
 if Mobius::Status_Icons::STATUS_ICONS_ENABLED
@@ -2119,7 +2112,6 @@ class Window_Base < Window
   end
 
 end
-
 #==============================================================================
 # ** Window_Help
 #------------------------------------------------------------------------------
@@ -2151,7 +2143,6 @@ end
 end # If STATUS_ICONS end
 #==========================STATUS ICONS EXPANSION END==========================
 
-
 #===========================BEASTIARY EXPANSION================================
 #==============================================================================
 # ** Game_Enemy
@@ -2168,7 +2159,6 @@ class Game_Enemy < Game_Battler
     return $data_enemies[@enemy_id].element_ranks
   end
 end
-
 #==============================================================================
 # ** Window_BeastList
 #------------------------------------------------------------------------------
@@ -2226,7 +2216,6 @@ class Window_BeastList < Window_Selectable
   end
 
 end
-
 #==============================================================================
 # ** Window_BeastMode
 #------------------------------------------------------------------------------
@@ -2277,7 +2266,6 @@ class Window_BeastMode < Window_Selectable
   end
   
 end
-
 #==============================================================================
 # ** Window_BeastInformation
 #------------------------------------------------------------------------------
@@ -2336,7 +2324,6 @@ class Window_BeastInformation < Window_Base
     end
   end
 end
-
 #==============================================================================
 # ** Window_BeastSprite
 #------------------------------------------------------------------------------
@@ -2369,7 +2356,6 @@ class Window_BeastSprite < Window_BeastInformation
     return @enemy.base_name + Mobius::Beastiary::BEASTIARY_SPRITE_SUFFIX
   end
 end
-
 #==============================================================================
 # ** Window_BeastStats
 #------------------------------------------------------------------------------
@@ -2449,7 +2435,6 @@ class Window_BeastStats < Window_BeastInformation
     self.contents.draw_text(x, y, w, h, parameter_value.to_s, 2)
   end
 end
-
 #==============================================================================
 # ** Window_BeastElements
 #------------------------------------------------------------------------------
@@ -2531,7 +2516,6 @@ class Window_BeastElements < Window_BeastInformation
     end
   end
 end
-
 #==============================================================================
 # ** Window_BeastStates
 #------------------------------------------------------------------------------
@@ -2616,7 +2600,6 @@ class Window_BeastStates < Window_BeastInformation
     end
   end
 end
-
 #==============================================================================
 # ** Window_BeastDetail
 #------------------------------------------------------------------------------
@@ -2744,7 +2727,6 @@ class Window_BeastDetail < Window_Base
     @sub_windows.each {|window| window.visible = boolean}
   end
 end
-
 #==============================================================================
 # ** Window_BeastSubDetail
 #------------------------------------------------------------------------------
@@ -2989,7 +2971,6 @@ class Window_BeastSubDetail < Window_Selectable
     end
   end
 end
-
 #==============================================================================
 # ** Scene_Beastiary
 #------------------------------------------------------------------------------
@@ -3140,7 +3121,6 @@ class Scene_Beastiary
   end
 
 end
-
 #=========================BEASTIARY EXPANSION END==============================
 
 #===============================RGSS CHANGES===================================
