@@ -16,6 +16,9 @@ class Window_BeastList < Window_Selectable
     # The $data_enemies starts at index 1 and has an empty entry in the 0 position
     num_of_enemies = $data_enemies.size - 1
     @data = $data_enemies.slice(1, num_of_enemies)
+    @data.delete_if do |enemy|
+      Mobius::Beastiary::HIDDEN_BEASTS.include?(enemy.id)
+    end
     @item_max = @data.size
     self.contents = Bitmap.new(width - 32, row_max * 32)
     refresh
@@ -40,8 +43,16 @@ class Window_BeastList < Window_Selectable
   def draw_item(index)
     rect = Rect.new(4, 32 * index, self.contents.width - 8, 32)
     enemy = @data[index]
-    enemy_id = enemy.id
-    enemy_id_text = ("%03d" % enemy_id) + ": "
+    if Mobius::Beastiary::DISPLAY_ID
+      if Mobius::Beastiary::DISPLAY_DATABASE_ID
+        enemy_id = enemy.id
+      else
+        enemy_id = index + 1
+      end
+      enemy_id_text = ("%03d" % enemy_id) + ": "
+    else
+      enemy_id_text = ""
+    end
     enemy_name = $game_party.scan_list.include?(enemy_id) ? enemy.name : "???"
     enemy_name = enemy.name # TODO: Remove
     text = enemy_id_text + enemy_name

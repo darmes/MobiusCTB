@@ -63,6 +63,19 @@ module Mobius
     STATUS_WORD_40    = "Resistant" # Rank D
     STATUS_WORD_20    = "Hardened"  # Rank E
     STATUS_WORD_0     = "Immune"    # Rank F
+    # Set this to true if you want to display a numeric ID before
+    # each beast in the beastiary's list e.g. "001: Ghost"
+    DISPLAY_ID = true
+    # This setting does nothing if DISPLAY_ID is false
+    # Set this to true to display a numeric ID that always matches
+    # what's in the database. Leave this false to allow the script
+    # to automatically determine an appropriate ID. 
+    # Mostly useful for debugging.
+    DISPLAY_DATABASE_ID = true
+    # You may want to hide certain beasts from displaying in the beastiary.
+    # If that's the case, simply list the IDs of the beasts below,
+    # separating them by commas, e.g. [1,2,3]
+    HIDDEN_BEASTS = [1,5,10]
     # You may want to hide certain elements from displaying in the beastiary.
     # If that's the case, simply list the IDs of the elements below,
     # separating them by commas, e.g. [1,2,3]
