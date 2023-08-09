@@ -169,15 +169,16 @@ module Mobius
     # Keep in mind that this is very literal, so spaces count.
     # Lastly, you don't need to worry about this if you've set the above option to false.
     ENEMY_BOSS_PREFIX = "Boss: "
+  end
 
+  #==============================================================================
+  # ** EXPANSION SETTINGS
+  #------------------------------------------------------------------------------
+  # The following settings are all optional, and are only used with the expansions
+  # to the core script.
+  #==============================================================================
 
-    #==============================================================================
-    # ** EXPANSION SETTINGS
-    #------------------------------------------------------------------------------
-    # The following settings are all optional, and are only used with the expansions
-    # to the core script.
-    #==============================================================================
-
+  module Scan_Skill
     #==============================================================================
     # ** SCAN SKILL SETTINGS
     #------------------------------------------------------------------------------
@@ -189,14 +190,16 @@ module Mobius
     # Once you've done that, set this option to the ID of the scan state that you created.
     # Then whenever an enemy has the scan state applied, you'll be able to see their HP/SP
     # when targeting them.
-    SCAN_STATE_ID = 0
+    SCAN_STATE_ID = 17
     # OPTIONAL: If you would like a pop-up to be displayed when you use the skill for the
     # first time, then you can do the following additional steps. Create a common event
     # called scan, and add a "script" command to it. Inside the script command, put
     # "Mobius.scan_skill_popup" without quotes. Then simply add the common event to the scan skill
     # you created earlier, and you're done!
     #==============================================================================
+  end
 
+  module Status_Icons
     #==============================================================================
     # ** STATUS_ICONS SETTINGS
     #------------------------------------------------------------------------------
@@ -210,7 +213,7 @@ module Mobius
     # To enable the "status icons" expansion, set STATUS_ICONS below to "true"
     #==============================================================================
     # Set this option to "true" to enable this expansion
-    STATUS_ICONS = false
+    STATUS_ICONS_ENABLED = false
     # If you've set the above to true, then you need to place an icon for each status in
     # the "Icons" folder by default but this can be changed if desired.
     # The names for each icon should be "StatusNameStatusSuffix"
@@ -220,7 +223,9 @@ module Mobius
     STATUS_ICON_SUFFIX = "_Status_Icon"
     # Here you can set the path to the status icons. Note that it is local to the project folder.
     STATUS_ICON_PATH = "Graphics/Icons/"
+  end
 
+  module Beastiary
     #==============================================================================
     # ** BEASTIARY SETTINGS
     #------------------------------------------------------------------------------
@@ -238,16 +243,16 @@ module Mobius
     # For additional setup and configuration, see the below instructions.
     #==============================================================================
     # Set this option to "true" to enable this expansion
-    BEASTIARY = false
-    # The standalone beastiary will show a 200x200 sprite of the enemy.
-    # For most small enemies, this is sufficient to display the entire sprite
-    # but not for large enemies. So you can create alternate display sprites.
-    # The names for each sprite should be "EnemyNameSpriteSuffix".
+    BEASTIARY_ENABLED = true
+    # The standalone beastiary has room for 384x384 sprite of the enemy.
+    # For most enemies, this is sufficient to display the entire sprite but it
+    # may not work for extra large enemies. To work around this, you can create
+    # alternate display sprites. The names for each sprite should be "EnemyNameSpriteSuffix".
     # You can set the suffix below. The default is "_Beastiary_Sprite". So "Ghost" sprite
     # would need to be named "Ghost_Beastiary_Sprite". The icons can be any supported image
-    # format (i.e. png, jpg, etc). Keep in mind that only 200x200 (width x height) pixels will be shown.
+    # format (i.e. png, jpg, etc). Keep in mind that only 384x384 pixels will be shown.
     # Any enemy without a special sprite will use it's normal one, so you only need
-    # to worry about the enemies with big sprites.
+    # to worry about the enemies with really big sprites.
     BEASTIARY_SPRITE_SUFFIX = "_Beastiary_Sprite"
     # By default, the script looks for special sprites in the "Pictures" folder.
     # You can change that by configuring the path below.
@@ -256,29 +261,38 @@ module Mobius
     # The beastiary window draws some divider lines which by default are colored
     # white. You can change the color to whatever you want by setting the below
     # numbers to your desired R,G,B values.
-    BEASTIARY_DIVIDER_LINE_COLOR = Color.new(255,255,255)
+    DIVIDER_LINE_COLOR = Color.new(255,255,255)
     # When naming an enemy's stats, the script will use whatever you have set in
     # the database, but there is no place in the database for an "EVA" word, so
     # you can set it below.
-    BEASTIARY_EVASION_WORD = "EVA"
+    EVASION_WORD = "EVA"
+    # Here you can configure the descriptors for the various beastiary pages
+    SPRITE_PAGE  = "Image"
+    STATS_PAGE   = "Stats"
+    ELEMENT_PAGE = "Elements"
+    STATUS_PAGE  = "Statuses"
     # Here you can configure the descriptors for the various element efficiencies
-    BEASTIARY_ELEMENT_WORD_200  = "Helpless"  # Rank A
-    BEASTIARY_ELEMENT_WORD_150  = "Weak"      # Rank B
-    BEASTIARY_ELEMENT_WORD_100  = "Normal"    # Rank C
-    BEASTIARY_ELEMENT_WORD_50   = "Resistant" # Rank D
-    BEASTIARY_ELEMENT_WORD_0    = "Immune"    # Rank E
-    BEASTIARY_ELEMENT_WORD_M100 = "Absorbs"   # Rank F
+    ELEMENT_WORD_200  = "Helpless"  # Rank A
+    ELEMENT_WORD_150  = "Weak"      # Rank B
+    ELEMENT_WORD_100  = "Normal"    # Rank C
+    ELEMENT_WORD_50   = "Resistant" # Rank D
+    ELEMENT_WORD_0    = "Immune"    # Rank E
+    ELEMENT_WORD_M100 = "Absorbs"   # Rank F
     # Here you can configure the descriptors for the various status efficiencies
-    BEASTIARY_STATUS_WORD_100   = "Helpless"  # Rank A
-    BEASTIARY_STATUS_WORD_80    = "Weak"      # Rank B
-    BEASTIARY_STATUS_WORD_60    = "Normal"    # Rank C
-    BEASTIARY_STATUS_WORD_40    = "Resistant" # Rank D
-    BEASTIARY_STATUS_WORD_20    = "Hardened"  # Rank E
-    BEASTIARY_STATUS_WORD_0     = "Immune"    # Rank F
-    # TODO: Write Description
-    BEASTIARY_HIDDEN_ELEMENTS = [9,10,11]
-    BEASTIARY_HIDDEN_STATES = [9,10,11]
-
+    STATUS_WORD_100   = "Helpless"  # Rank A
+    STATUS_WORD_80    = "Weak"      # Rank B
+    STATUS_WORD_60    = "Normal"    # Rank C
+    STATUS_WORD_40    = "Resistant" # Rank D
+    STATUS_WORD_20    = "Hardened"  # Rank E
+    STATUS_WORD_0     = "Immune"    # Rank F
+    # You may want to hide certain elements from displaying in the beastiary.
+    # If that's the case, simply list the IDs of the elements below,
+    # separating them by commas, e.g. [1,2,3]
+    HIDDEN_ELEMENTS = []
+    # You may want to hide certain states from displaying in the beastiary.
+    # If that's the case, simply list the IDs of the states below,
+    # separating them by commas, e.g. [1,2,3]
+    HIDDEN_STATES = []
   end
 end
 #==============================================================================
@@ -560,7 +574,7 @@ class Window_Help < Window_Base
   alias mobius_ctb_set_enemy set_enemy
   def set_enemy(enemy)
     # If enemy has been scanned
-    if enemy.state?(Mobius::Charge_Turn_Battle::SCAN_STATE_ID)
+    if enemy.state?(Mobius::Scan_Skill::SCAN_STATE_ID)
       # treat enemy as actor
       set_actor(enemy)
     else
@@ -627,7 +641,7 @@ class Window_BigBattleStatus < Window_Base
       self.contents.draw_text(1 + (1*w), 22 + (i*22), w, h, state, 1)
       # Check to see if the enemy has been scanned
       # If not, then return question mark values
-      if battler.is_a?(Game_Enemy) and not battler.state?(Mobius::Charge_Turn_Battle::SCAN_STATE_ID)
+      if battler.is_a?(Game_Enemy) and not battler.state?(Mobius::Scan_Skill::SCAN_STATE_ID)
           self.contents.draw_text(1 + (2*w), 22 + (i*22), w, 32,"???", 2) # HP
           self.contents.draw_text(1 + (3*w), 22 + (i*22), w, 32,"???", 2) # SP
       else
@@ -1061,7 +1075,7 @@ class Scene_Battle
     @turn_order_window = Window_TurnOrder.new #Mobius Added
     all_battlers = [].concat($game_party.actors).concat($game_troop.enemies)
     @big_status_window = Window_BigBattleStatus.new(all_battlers)
-    if Mobius::Charge_Turn_Battle::BEASTIARY
+    if Mobius::Beastiary::BEASTIARY_ENABLED
       @enemy_detail_window = Window_BeastDetail.new(nil, true) #Mobius Added
     end
     # Make sprite set
@@ -1102,7 +1116,7 @@ class Scene_Battle
     @message_window.dispose
     @turn_order_window.dispose # Mobius Added
     @big_status_window.dispose # Mobius
-    if Mobius::Charge_Turn_Battle::BEASTIARY
+    if Mobius::Beastiary::BEASTIARY_ENABLED
       @enemy_detail_window.dispose # Mobius
     end
     if @skill_window != nil
@@ -1474,13 +1488,13 @@ class Scene_Battle
     # Update enemy arrow
     @enemy_arrow.update
     # If Beastiary is added
-    if Mobius::Charge_Turn_Battle::BEASTIARY
+    if Mobius::Beastiary::BEASTIARY_ENABLED
       # If Beastiary access button is pressed
       if Input.trigger?(Input::BEASTIARY_BATTLE_ACCESS_BUTTON)
         # Set enemy
         enemy = @enemy_arrow.enemy
         # If enemy has been scanned
-        if enemy.state?(Mobius::Charge_Turn_Battle::SCAN_STATE_ID)
+        if enemy.state?(Mobius::Scan_Skill::SCAN_STATE_ID)
           # Play decision SE
           $game_system.se_play($data_system.decision_se)
           # Start enemy detail window
@@ -1971,7 +1985,7 @@ class Game_Party
   alias mobius_ctb_initialize initialize
   def initialize
     mobius_ctb_initialize
-    @scan_list = []
+    @scan_list = [1,2,3]
   end
 
 end
@@ -2030,7 +2044,7 @@ end
 
 
 #===========================STATUS ICONS EXPANSION=============================
-if Mobius::Charge_Turn_Battle::STATUS_ICONS
+if Mobius::Status_Icons::STATUS_ICONS_ENABLED
 #==============================================================================
 # ** Window_Base
 #------------------------------------------------------------------------------
@@ -2091,7 +2105,7 @@ class Window_Base < Window
     # get associated icon name
     icon_base_name = $data_states[id].name
     # get suffix
-    suffix = Mobius::Charge_Turn_Battle::STATUS_ICON_SUFFIX
+    suffix = Mobius::Status_Icons::STATUS_ICON_SUFFIX
     # create filename
     icon_name = icon_base_name + suffix
     # load icon bitmap
@@ -2227,14 +2241,12 @@ class Window_BeastMode < Window_Selectable
     # called in super @item_max = 1
     # called in super @column_max = 1
     # called in super @index = -1
-    #super(256, 0, 640 - 256, 96)
-    super(0, 480-64, 640, 64)
-    # TODO: Make labels configurable
+    super(0, 480 - 64, 640, 64)
     @data = [
-      "Sprite",
-      "Stats",
-      "Elements",
-      "States",
+      Mobius::Beastiary::SPRITE_PAGE,
+      Mobius::Beastiary::STATS_PAGE,
+      Mobius::Beastiary::ELEMENT_PAGE,
+      Mobius::Beastiary::STATUS_PAGE,
     ]
     @item_max = @data.size
     @column_max = 4
@@ -2276,7 +2288,6 @@ class Window_BeastInformation < Window_Base
   # * Object Initialization
   #--------------------------------------------------------------------------
   def initialize
-    #super(256, 96, 384, 384)
     super(222, 0, 416, 416)
     self.contents = Bitmap.new(width - 32, height - 32)
     self.visible = false
@@ -2355,7 +2366,7 @@ class Window_BeastSprite < Window_BeastInformation
   # * Get Filename - Returns filename for sprite
   #--------------------------------------------------------------------------
   def get_filename
-    return @enemy.base_name + Mobius::Charge_Turn_Battle::BEASTIARY_SPRITE_SUFFIX
+    return @enemy.base_name + Mobius::Beastiary::BEASTIARY_SPRITE_SUFFIX
   end
 end
 
@@ -2371,13 +2382,22 @@ class Window_BeastStats < Window_BeastInformation
   def refresh
     super
     unless @enemy == nil
-      padding = 4
+      column_max = 2
+      padding = 8
       height = 32
-      width = self.contents.width - padding
-      # draw all stats
+      width = self.contents.width / column_max
+      # Draw all stats
       for i in 0..9
-        draw_enemy_parameter(padding, i * height, width, height, i)
+        x = i % column_max * (width + padding)
+        y = i / column_max * height
+        draw_enemy_parameter(x, y, width - padding, height, i)
       end
+      # Get color
+      color = Mobius::Beastiary::DIVIDER_LINE_COLOR
+      # Draw separating line
+      self.contents.fill_rect(0, 168, contents.width, 1, color)
+      # Draw bio
+      self.contents.draw_text(0, 176, contents.width, 224, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
     end
   end
   #--------------------------------------------------------------------------
@@ -2397,14 +2417,14 @@ class Window_BeastStats < Window_BeastInformation
       parameter_name = $data_system.words.sp
       parameter_value = @enemy.maxsp
     when 2
-      parameter_name = $data_system.words.atk
-      parameter_value = @enemy.atk
-    when 3
       parameter_name = $data_system.words.pdef
       parameter_value = @enemy.pdef
-    when 4
+    when 3
       parameter_name = $data_system.words.mdef
       parameter_value = @enemy.mdef
+    when 4
+      parameter_name = $data_system.words.atk
+      parameter_value = @enemy.atk
     when 5
       parameter_name = $data_system.words.str
       parameter_value = @enemy.str
@@ -2418,7 +2438,7 @@ class Window_BeastStats < Window_BeastInformation
       parameter_name = $data_system.words.int
       parameter_value = @enemy.int
     when 9
-      parameter_name = Mobius::Charge_Turn_Battle::BEASTIARY_EVASION_WORD
+      parameter_name = Mobius::Beastiary::EVASION_WORD
       parameter_value = @enemy.eva
     end
     # draw stat name
@@ -2446,7 +2466,7 @@ class Window_BeastElements < Window_BeastInformation
     # and then removing IDs that we want to hide in the beastiary
     num_of_elements = $data_system.elements.size - 1
     @element_ids = (1..num_of_elements).to_a
-    Mobius::Charge_Turn_Battle::BEASTIARY_HIDDEN_ELEMENTS.each do |id|
+    Mobius::Beastiary::HIDDEN_ELEMENTS.each do |id|
       @element_ids.delete(id)
     end
     # Create a bitmap big enough to hold all the elements
@@ -2462,7 +2482,7 @@ class Window_BeastElements < Window_BeastInformation
   def refresh
     super
     unless @enemy == nil
-      padding = 4
+      padding = 0
       height = 32
       width = self.contents.width - padding
       # draw all elements
@@ -2497,17 +2517,17 @@ class Window_BeastElements < Window_BeastInformation
   def element_rank_decode(element_rank)
     case element_rank
     when 1 # Very Weak = 200%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_ELEMENT_WORD_200
+      return Mobius::Beastiary::ELEMENT_WORD_200
     when 2 # Weak = 150%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_ELEMENT_WORD_150
+      return Mobius::Beastiary::ELEMENT_WORD_150
     when 3 # Normal = 100%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_ELEMENT_WORD_100
+      return Mobius::Beastiary::ELEMENT_WORD_100
     when 4 # Resistant = 50%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_ELEMENT_WORD_50
+      return Mobius::Beastiary::ELEMENT_WORD_50
     when 5 # Immune = 0%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_ELEMENT_WORD_0
+      return Mobius::Beastiary::ELEMENT_WORD_0
     when 6 # Absorb = -100%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_ELEMENT_WORD_M100
+      return Mobius::Beastiary::ELEMENT_WORD_M100
     end
   end
 end
@@ -2528,7 +2548,7 @@ class Window_BeastStates < Window_BeastInformation
     # and then removing IDs that we want to hide in the beastiary
     num_of_states = $data_states.size - 1
     @state_ids = (1..num_of_states).to_a
-    Mobius::Charge_Turn_Battle::BEASTIARY_HIDDEN_STATES.each do |id|
+    Mobius::Beastiary::HIDDEN_STATES.each do |id|
       @state_ids.delete(id)
     end
     @state_ids.delete_if do |id|
@@ -2547,7 +2567,7 @@ class Window_BeastStates < Window_BeastInformation
   def refresh
     super
     unless @enemy == nil
-      padding = 4
+      padding = 0
       height = 32
       width = self.contents.width - padding
       # draw all elements
@@ -2582,17 +2602,17 @@ class Window_BeastStates < Window_BeastInformation
   def state_rank_decode(state_rank)
     case state_rank
     when 1 # Very Weak = 100%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_STATUS_WORD_100
+      return Mobius::Beastiary::STATUS_WORD_100
     when 2 # Weak = 80%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_STATUS_WORD_80
+      return Mobius::Beastiary::STATUS_WORD_80
     when 3 # Normal = 60%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_STATUS_WORD_60
+      return Mobius::Beastiary::STATUS_WORD_60
     when 4 # Resistant = 40%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_STATUS_WORD_40
+      return Mobius::Beastiary::STATUS_WORD_40
     when 5 # Very Resistant = 20%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_STATUS_WORD_20
+      return Mobius::Beastiary::STATUS_WORD_20
     when 6 # Immune = 0%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_STATUS_WORD_0
+      return Mobius::Beastiary::STATUS_WORD_0
     end
   end
 end
@@ -2679,7 +2699,7 @@ class Window_BeastDetail < Window_Base
     # Create empty contents
     self.contents = Bitmap.new(width - 32, height - 32)
     # Get color
-    color = Mobius::Charge_Turn_Battle::BEASTIARY_DIVIDER_LINE_COLOR
+    color = Mobius::Beastiary::DIVIDER_LINE_COLOR
     # Draw name
     self.contents.draw_text(0, 0, contents.width, 32, @enemy.name, 1)
     # Draw header line
@@ -2852,7 +2872,7 @@ class Window_BeastSubDetail < Window_Selectable
       parameter_name = $data_system.words.int
       parameter_value = enemy.int
     when 9
-      parameter_name = Mobius::Charge_Turn_Battle::BEASTIARY_EVASION_WORD
+      parameter_name = Mobius::Beastiary::EVASION_WORD
       parameter_value = enemy.eva
     end
     # draw stat name
@@ -2902,17 +2922,17 @@ class Window_BeastSubDetail < Window_Selectable
   def element_rank_decode(element_rank)
     case element_rank
     when 1 # Very Weak = 200%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_ELEMENT_WORD_200
+      return Mobius::Beastiary::ELEMENT_WORD_200
     when 2 # Weak = 150%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_ELEMENT_WORD_150
+      return Mobius::Beastiary::ELEMENT_WORD_150
     when 3 # Normal = 100%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_ELEMENT_WORD_100
+      return Mobius::Beastiary::ELEMENT_WORD_100
     when 4 # Resistant = 50%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_ELEMENT_WORD_50
+      return Mobius::Beastiary::ELEMENT_WORD_50
     when 5 # Immune = 0%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_ELEMENT_WORD_0
+      return Mobius::Beastiary::ELEMENT_WORD_0
     when 6 # Absorb = -100%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_ELEMENT_WORD_M100
+      return Mobius::Beastiary::ELEMENT_WORD_M100
     end
   end
   #--------------------------------------------------------------------------
@@ -2955,17 +2975,17 @@ class Window_BeastSubDetail < Window_Selectable
   def state_rank_decode(state_rank)
     case state_rank
     when 1 # Very Weak = 100%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_STATUS_WORD_100
+      return Mobius::Beastiary::STATUS_WORD_100
     when 2 # Weak = 80%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_STATUS_WORD_80
+      return Mobius::Beastiary::STATUS_WORD_80
     when 3 # Normal = 60%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_STATUS_WORD_60
+      return Mobius::Beastiary::STATUS_WORD_60
     when 4 # Resistant = 40%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_STATUS_WORD_40
+      return Mobius::Beastiary::STATUS_WORD_40
     when 5 # Very Resistant = 20%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_STATUS_WORD_20
+      return Mobius::Beastiary::STATUS_WORD_20
     when 6 # Immune = 0%
-      return Mobius::Charge_Turn_Battle::BEASTIARY_STATUS_WORD_0
+      return Mobius::Beastiary::STATUS_WORD_0
     end
   end
 end
@@ -2982,8 +3002,8 @@ class Scene_Beastiary
   def create_windows
     @Window_BeastList = Window_BeastList.new
     @Window_BeastMode = Window_BeastMode.new
-    #@Window_BeastDetail = Window_BeastDetail.new
     @Window_BeastSprite = Window_BeastSprite.new
+    @Window_BeastSprite.visible = true
     @Window_BeastStats = Window_BeastStats.new
     @Window_BeastElements = Window_BeastElements.new
     @Window_BeastStates = Window_BeastStates.new
@@ -3003,10 +3023,8 @@ class Scene_Beastiary
   # * Dispose Windows
   #--------------------------------------------------------------------------
   def dispose_windows
-    # Make windows
     @Window_BeastList.dispose
     @Window_BeastMode.dispose
-    #@Window_BeastDetail.dispose
     @Window_BeastSprite.dispose
     @Window_BeastStats.dispose
     @Window_BeastElements.dispose
@@ -3142,7 +3160,7 @@ module RPG::Cache
   # * Status icon loading from cache
   #--------------------------------------------------------------------------
   def self.status_icon(filename)
-    path = Mobius::Charge_Turn_Battle::STATUS_ICON_PATH
+    path = Mobius::Status_Icons::STATUS_ICON_PATH
     self.load_bitmap(path, filename)
   end
   #--------------------------------------------------------------------------
@@ -3150,7 +3168,7 @@ module RPG::Cache
   #--------------------------------------------------------------------------
 
   def self.beastiary_sprite(filename)
-    path = Mobius::Charge_Turn_Battle::BEASTIARY_SPRITE_PATH
+    path = Mobius::Beastiary::BEASTIARY_SPRITE_PATH
     self.load_bitmap(path, filename)
   end
 end
