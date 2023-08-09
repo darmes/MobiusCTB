@@ -35,18 +35,6 @@ class Window_BeastInformation < Window_Base
     end
   end
   #--------------------------------------------------------------------------
-  # * Refresh
-  #--------------------------------------------------------------------------
-  def refresh
-    # Clear contents
-    self.contents.clear
-    if @enemy == nil
-      w = self.contents.width
-      h = self.contents.height
-      self.contents.draw_text(0, 0, w, h, "???", 1)
-    end
-  end
-  #--------------------------------------------------------------------------
   # * Set Enemy - Calls refresh as needed
   #--------------------------------------------------------------------------
   def enemy=(new_enemy)

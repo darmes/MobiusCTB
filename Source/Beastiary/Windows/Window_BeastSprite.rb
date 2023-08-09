@@ -8,8 +8,13 @@ class Window_BeastSprite < Window_BeastInformation
   # * Refresh
   #--------------------------------------------------------------------------
   def refresh
-    super
-    unless @enemy == nil
+    # Clear contents
+    self.contents.clear
+    if @enemy == nil
+      w = self.contents.width
+      h = self.contents.height
+      self.contents.draw_text(0, 0, w, h, "???", 1)
+    else
       # Get sprite bitmap
       enemy_bitmap = RPG::Cache.beastiary_sprite(self.get_filename)
       rect = Rect.new(0, 0, contents.width, contents.height)

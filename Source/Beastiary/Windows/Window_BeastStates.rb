@@ -31,15 +31,14 @@ class Window_BeastStates < Window_BeastInformation
   # * Refresh
   #--------------------------------------------------------------------------
   def refresh
-    super
-    unless @enemy == nil
-      padding = 0
-      height = 32
-      width = self.contents.width - padding
-      # draw all elements
-      for i in 0...@state_ids.size
-        draw_state(padding, i * height, width, height, @state_ids[i])
-      end
+    # Clear contents
+    self.contents.clear
+    padding = 0
+    height = 32
+    width = self.contents.width - padding
+    # draw all elements
+    for i in 0...@state_ids.size
+      draw_state(padding, i * height, width, height, @state_ids[i])
     end
   end
   #--------------------------------------------------------------------------
@@ -56,11 +55,14 @@ class Window_BeastStates < Window_BeastInformation
     # draw name
     self.contents.font.color = system_color
     self.contents.draw_text(x, y, w, h, name, 0)
-    # get state rank
-    state_rank = state_rank_decode(@enemy.state_ranks[state_id])
-    # draw state name
+    # draw state rank
     self.contents.font.color = normal_color
-    self.contents.draw_text(x, y, w, h, state_rank, 2)
+    if @enemy
+      state_rank = state_rank_decode(@enemy.state_ranks[state_id])
+      self.contents.draw_text(x, y, w, h, state_rank, 2)
+    else
+      self.contents.draw_text(x, y, w, h, "???", 2)
+    end
   end
   #--------------------------------------------------------------------------
   # * State Rank Decode - converts integer to string based on customization

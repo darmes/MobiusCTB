@@ -28,15 +28,14 @@ class Window_BeastElements < Window_BeastInformation
   # * Refresh
   #--------------------------------------------------------------------------
   def refresh
-    super
-    unless @enemy == nil
-      padding = 0
-      height = 32
-      width = self.contents.width - padding
-      # draw all elements
-      for i in 0...@element_ids.size
-        draw_element(padding, i * height, width, height, @element_ids[i])
-      end
+    # Clear contents
+    self.contents.clear
+    # draw all elements
+    padding = 0
+    height = 32
+    width = self.contents.width - padding
+    for i in 0...@element_ids.size
+      draw_element(padding, i * height, width, height, @element_ids[i])
     end
   end
   #--------------------------------------------------------------------------
@@ -53,11 +52,15 @@ class Window_BeastElements < Window_BeastInformation
     # draw name
     self.contents.font.color = system_color
     self.contents.draw_text(x, y, w, h, name, 0)
-    # get element rank
-    element_rank = element_rank_decode(@enemy.element_ranks[element_id])
     # draw element rank
     self.contents.font.color = normal_color
-    self.contents.draw_text(x, y, w, h, element_rank, 2)
+    if @enemy
+      # get element rank
+      element_rank = element_rank_decode(@enemy.element_ranks[element_id])
+      self.contents.draw_text(x, y, w, h, element_rank, 2)
+    else
+      self.contents.draw_text(x, y, w, h, "???", 2)
+    end
   end
   #--------------------------------------------------------------------------
   # * Element Rank Decode - converts integer to string based on customization
