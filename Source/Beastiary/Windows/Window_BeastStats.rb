@@ -25,7 +25,7 @@ class Window_BeastStats < Window_BeastInformation
       # Draw separating line
       self.contents.fill_rect(0, 168, contents.width, 1, color)
       # Draw bio
-      self.contents.draw_text(0, 176, contents.width, 224, "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.")
+      draw_bio
     end
   end
   #--------------------------------------------------------------------------
@@ -75,5 +75,15 @@ class Window_BeastStats < Window_BeastInformation
     # draw stat value
     self.contents.font.color = normal_color
     self.contents.draw_text(x, y, w, h, parameter_value.to_s, 2)
+  end
+  #--------------------------------------------------------------------------
+  # * Draw Bio
+  #--------------------------------------------------------------------------
+  def draw_bio
+    bio = Mobius::Beastiary::BIOGRAPHIES[@enemy.id]
+    bio.each_with_index  do |line, index|
+      y = index * 32 + 176
+      self.contents.draw_text(4, y, contents.width, 32, line)
+    end
   end
 end

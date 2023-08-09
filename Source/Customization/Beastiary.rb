@@ -46,7 +46,7 @@ module Mobius
     EVASION_WORD = "EVA"
     # Here you can configure the descriptors for the various beastiary pages
     SPRITE_PAGE  = "Image"
-    STATS_PAGE   = "Stats"
+    STATS_PAGE   = "Stats/Bio"
     ELEMENT_PAGE = "Elements"
     STATUS_PAGE  = "Statuses"
     # Here you can configure the descriptors for the various element efficiencies
@@ -71,11 +71,11 @@ module Mobius
     # what's in the database. Leave this false to allow the script
     # to automatically determine an appropriate ID. 
     # Mostly useful for debugging.
-    DISPLAY_DATABASE_ID = true
+    DISPLAY_DATABASE_ID = false
     # You may want to hide certain beasts from displaying in the beastiary.
     # If that's the case, simply list the IDs of the beasts below,
     # separating them by commas, e.g. [1,2,3]
-    HIDDEN_BEASTS = [1,5,10]
+    HIDDEN_BEASTS = []
     # You may want to hide certain elements from displaying in the beastiary.
     # If that's the case, simply list the IDs of the elements below,
     # separating them by commas, e.g. [1,2,3]
@@ -84,5 +84,23 @@ module Mobius
     # If that's the case, simply list the IDs of the states below,
     # separating them by commas, e.g. [1,2,3]
     HIDDEN_STATES = []
+    # Here you can enter short biographies for each beast.
+    # To set this up, place the enemy ID followed by an arrow "=>" and then the bio.
+    # The bio can consist of up to 7 lines. All lines should be surrounded with square
+    # brackets [] and separated by commas. Keep in mind that lines that are too
+    # long will get automatically squished to try and fit.
+    BIOGRAPHIES = {
+      1 => [
+        "Ghosts are the spirits of those who",
+        "died with unfinished business in life"
+      ],
+      4 => [
+        "Hellhounds are the guardians of the",
+        "underworld who have abandoned their posts.",
+        "Now they wander the wilderness preying",
+        "upon hapless travellers.",
+      ]
+    }
+    BIOGRAPHIES.default = []
   end
 end
