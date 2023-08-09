@@ -1,7 +1,7 @@
 #==============================================================================
 # ** Window_BeastElements
 #------------------------------------------------------------------------------
-#  This window displays the sprite of the selected beast
+#  This window displays the elemental affinities of the selected beast
 #==============================================================================
 class Window_BeastElements < Window_BeastInformation
   #--------------------------------------------------------------------------

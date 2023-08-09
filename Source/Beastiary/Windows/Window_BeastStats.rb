@@ -1,7 +1,7 @@
 #==============================================================================
 # ** Window_BeastStats
 #------------------------------------------------------------------------------
-#  This window displays the sprite of the selected beast
+#  This window displays the stats of the selected beast
 #==============================================================================
 class Window_BeastStats < Window_BeastInformation
   #--------------------------------------------------------------------------

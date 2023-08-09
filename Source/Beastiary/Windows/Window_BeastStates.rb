@@ -1,7 +1,7 @@
 #==============================================================================
 # ** Window_BeastStates
 #------------------------------------------------------------------------------
-#  This window displays the sprite of the selected beast
+#  This window displays the status affinities of the selected beast
 #==============================================================================
 class Window_BeastStates < Window_BeastInformation
   #--------------------------------------------------------------------------
