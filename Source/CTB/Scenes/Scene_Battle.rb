@@ -46,7 +46,7 @@ class Scene_Battle
     all_battlers = [].concat($game_party.actors).concat($game_troop.enemies)
     @big_status_window = Window_BigBattleStatus.new(all_battlers)
     if Mobius::Beastiary::BEASTIARY_ENABLED
-      @enemy_detail_window = Window_BeastDetail.new(nil, true) #Mobius Added
+      @enemy_detail_window = Window_BeastDetail.new #Mobius Added
     end
     # Make sprite set
     @spriteset = Spriteset_Battle.new
@@ -832,7 +832,6 @@ class Scene_Battle
   def start_enemy_detail_window(enemy)
     # Set enemy detail window's enemy
     @enemy_detail_window.enemy = enemy
-    @enemy_detail_window.update
     # Show enemy detail window
     @enemy_detail_window.visible = true
     # Hide turn order window

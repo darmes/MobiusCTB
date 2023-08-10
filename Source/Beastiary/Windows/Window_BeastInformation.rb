@@ -7,8 +7,8 @@ class Window_BeastInformation < Window_Base
   #--------------------------------------------------------------------------
   # * Object Initialization
   #--------------------------------------------------------------------------
-  def initialize
-    super(222, 0, 416, 416)
+  def initialize(x = 222, y = 0, w = 416, h = 416)
+    super(x, y, w, h)
     self.contents = Bitmap.new(width - 32, height - 32)
     self.visible = false
     @enemy = nil
