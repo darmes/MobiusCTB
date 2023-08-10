@@ -41,27 +41,5 @@ class Window_BeastStates < Window_BeastInformation
       draw_state(padding, i * height, width, height, @state_ids[i])
     end
   end
-  #--------------------------------------------------------------------------
-  # * Draw State
-  #     x           : draw spot x-coordinate
-  #     y           : draw spot y-coordinate
-  #     w           : draw spot width
-  #     h           : draw spot height
-  #     state_id    : state_id corresponds to database value
-  #--------------------------------------------------------------------------
-  def draw_state(x, y, w, h, state_id)
-    # get name
-    name = $data_states[state_id].name
-    # draw name
-    self.contents.font.color = system_color
-    self.contents.draw_text(x, y, w, h, name, 0)
-    # draw state rank
-    self.contents.font.color = normal_color
-    if @enemy
-      state_efficiency = @enemy.state_efficiency(state_id)
-      self.contents.draw_text(x, y, w, h, state_efficiency, 2)
-    else
-      self.contents.draw_text(x, y, w, h, "???", 2)
-    end
-  end
+  
 end

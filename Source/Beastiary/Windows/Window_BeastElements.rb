@@ -38,26 +38,4 @@ class Window_BeastElements < Window_BeastInformation
       draw_element(padding, i * height, width, height, @element_ids[i])
     end
   end
-  #--------------------------------------------------------------------------
-  # * Draw Element
-  #     x           : draw spot x-coordinate
-  #     y           : draw spot y-coordinate
-  #     w           : draw spot width
-  #     h           : draw spot height
-  #     element_id  : element_id corresponds to database value
-  #--------------------------------------------------------------------------
-  def draw_element(x, y, w, h, element_id)
-    # draw name
-    name = $data_system.elements[element_id]
-    self.contents.font.color = system_color
-    self.contents.draw_text(x, y, w, h, name, 0)
-    # draw element rank
-    self.contents.font.color = normal_color
-    if @enemy
-      element_efficiency = @enemy.element_efficiency(element_id)
-      self.contents.draw_text(x, y, w, h, element_efficiency, 2)
-    else
-      self.contents.draw_text(x, y, w, h, "???", 2)
-    end
-  end
 end
