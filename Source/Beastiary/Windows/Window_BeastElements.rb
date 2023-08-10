@@ -47,38 +47,17 @@ class Window_BeastElements < Window_BeastInformation
   #     element_id  : element_id corresponds to database value
   #--------------------------------------------------------------------------
   def draw_element(x, y, w, h, element_id)
-    # get element name
-    name = $data_system.elements[element_id]
     # draw name
+    name = $data_system.elements[element_id]
     self.contents.font.color = system_color
     self.contents.draw_text(x, y, w, h, name, 0)
     # draw element rank
     self.contents.font.color = normal_color
     if @enemy
-      # get element rank
-      element_rank = element_rank_decode(@enemy.element_ranks[element_id])
-      self.contents.draw_text(x, y, w, h, element_rank, 2)
+      element_efficiency = @enemy.element_efficiency(element_id)
+      self.contents.draw_text(x, y, w, h, element_efficiency, 2)
     else
       self.contents.draw_text(x, y, w, h, "???", 2)
-    end
-  end
-  #--------------------------------------------------------------------------
-  # * Element Rank Decode - converts integer to string based on customization
-  #--------------------------------------------------------------------------
-  def element_rank_decode(element_rank)
-    case element_rank
-    when 1 # Very Weak = 200%
-      return Mobius::Beastiary::ELEMENT_WORD_200
-    when 2 # Weak = 150%
-      return Mobius::Beastiary::ELEMENT_WORD_150
-    when 3 # Normal = 100%
-      return Mobius::Beastiary::ELEMENT_WORD_100
-    when 4 # Resistant = 50%
-      return Mobius::Beastiary::ELEMENT_WORD_50
-    when 5 # Immune = 0%
-      return Mobius::Beastiary::ELEMENT_WORD_0
-    when 6 # Absorb = -100%
-      return Mobius::Beastiary::ELEMENT_WORD_M100
     end
   end
 end

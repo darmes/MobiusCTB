@@ -58,29 +58,10 @@ class Window_BeastStates < Window_BeastInformation
     # draw state rank
     self.contents.font.color = normal_color
     if @enemy
-      state_rank = state_rank_decode(@enemy.state_ranks[state_id])
-      self.contents.draw_text(x, y, w, h, state_rank, 2)
+      state_efficiency = @enemy.state_efficiency(state_id)
+      self.contents.draw_text(x, y, w, h, state_efficiency, 2)
     else
       self.contents.draw_text(x, y, w, h, "???", 2)
-    end
-  end
-  #--------------------------------------------------------------------------
-  # * State Rank Decode - converts integer to string based on customization
-  #--------------------------------------------------------------------------
-  def state_rank_decode(state_rank)
-    case state_rank
-    when 1 # Very Weak = 100%
-      return Mobius::Beastiary::STATUS_WORD_100
-    when 2 # Weak = 80%
-      return Mobius::Beastiary::STATUS_WORD_80
-    when 3 # Normal = 60%
-      return Mobius::Beastiary::STATUS_WORD_60
-    when 4 # Resistant = 40%
-      return Mobius::Beastiary::STATUS_WORD_40
-    when 5 # Very Resistant = 20%
-      return Mobius::Beastiary::STATUS_WORD_20
-    when 6 # Immune = 0%
-      return Mobius::Beastiary::STATUS_WORD_0
     end
   end
 end
