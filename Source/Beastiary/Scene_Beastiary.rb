@@ -68,15 +68,9 @@ class Scene_Beastiary
   # * update
   #--------------------------------------------------------------------------
   def update
-    # Update cursors
     update_windows
-    # If the user is selecting a beast
-    if @Window_BeastList.active
-      update_list
-    # If the user is selecting a mode
-    else
-      update_mode
-    end
+    update_list
+    update_mode
   end
   #--------------------------------------------------------------------------
   # * Update List
@@ -99,14 +93,12 @@ class Scene_Beastiary
     if Input.trigger?(Input::B)
       # Play cancel SE
       $game_system.se_play($data_system.cancel_se)
-      # TODO: Make better handling for exit
-      $scene = Scene_Menu.new()
-    end
-    # When enter
-    if Input.trigger?(Input::C)
-      $game_system.se_play($data_system.decision_se)
-      @Window_BeastMode.active = true
-      @Window_BeastList.active = false
+      # Exit to menu by default
+      if Mobius::Beastiary::EXIT_TO_MENU
+        $scene = Scene_Menu.new
+      else
+        $scene = Scene_Map.new
+      end
     end
   end
   #--------------------------------------------------------------------------
@@ -132,17 +124,6 @@ class Scene_Beastiary
     # When States
     when 3
       @Window_BeastStates.visible = true
-    end
-    # When cancel
-    if Input.trigger?(Input::B)
-      # Play cancel SE
-      $game_system.se_play($data_system.cancel_se)
-      @Window_BeastMode.active = false
-      @Window_BeastList.active = true
-    end
-    # When enter
-    if Input.trigger?(Input::C)
-      # TODO: Remove if not needed
     end
   end
 

@@ -44,6 +44,11 @@ module Mobius
     # the database, but there is no place in the database for an "EVA" word, so
     # you can set it below.
     EVASION_WORD = "EVA"
+    # When closing the beastiary, it will default to opening the menu.
+    # This behavior assumes that you've set up your menu to allow accessing
+    # the beastiary (which you can do with my Menu Command Manager).
+    # If you'd rather have it exit to the map, you can set this to false
+    EXIT_TO_MENU = true
     # Here you can configure the descriptors for the various beastiary pages
     SPRITE_PAGE  = "Image"
     STATS_PAGE   = "Stats/Bio"

@@ -24,7 +24,7 @@ class Window_BeastMode < Window_Selectable
     self.contents = Bitmap.new(width - 32, row_max * 32)
     refresh
     self.visible = true
-    self.active = false
+    self.active = true
     self.index = 0
   end
   #--------------------------------------------------------------------------
