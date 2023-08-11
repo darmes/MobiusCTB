@@ -136,4 +136,23 @@ class Window_BeastInformation < Window_Base
       self.contents.draw_text(x, y, w, h, "???", 2)
     end
   end
+  #--------------------------------------------------------------------------
+  # * Filters out any element IDs that should be hidden from display
+  #--------------------------------------------------------------------------
+  def filter_elements(elements)
+    Mobius::Beastiary::HIDDEN_ELEMENTS.each do |id|
+      elements.delete(id)
+    end
+  end
+  #--------------------------------------------------------------------------
+  # * Filters out any state IDs that should be hidden from display
+  #--------------------------------------------------------------------------
+  def filter_states(states)
+    Mobius::Beastiary::HIDDEN_STATES.each do |id|
+      states.delete(id)
+    end
+    states.delete_if do |id|
+      $data_states[id].rating < 1
+    end
+  end
 end

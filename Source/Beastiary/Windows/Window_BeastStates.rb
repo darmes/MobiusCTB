@@ -14,12 +14,7 @@ class Window_BeastStates < Window_BeastInformation
     # and then removing IDs that we want to hide in the beastiary
     num_of_states = $data_states.size - 1
     @state_ids = (1..num_of_states).to_a
-    Mobius::Beastiary::HIDDEN_STATES.each do |id|
-      @state_ids.delete(id)
-    end
-    @state_ids.delete_if do |id|
-      $data_states[id].rating < 1
-    end
+    filter_states(@state_ids)
     # Create a bitmap big enough to hold all the elements
     self.contents = Bitmap.new(width - 32, @state_ids.size * 32)
     # If the bitmap is bigger than the window's display height (h-32),

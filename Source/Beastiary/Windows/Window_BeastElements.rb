@@ -14,9 +14,7 @@ class Window_BeastElements < Window_BeastInformation
     # and then removing IDs that we want to hide in the beastiary
     num_of_elements = $data_system.elements.size - 1
     @element_ids = (1..num_of_elements).to_a
-    Mobius::Beastiary::HIDDEN_ELEMENTS.each do |id|
-      @element_ids.delete(id)
-    end
+    filter_elements(@element_ids)
     # Create a bitmap big enough to hold all the elements
     self.contents = Bitmap.new(width - 32, @element_ids.size * 32)
     # If the bitmap is bigger than the window's display height (h-32),
