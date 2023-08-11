@@ -9,6 +9,7 @@ v. 1.0    Initial Release
 v. 1.1    Customizable Turn Icons  
 v. 1.2    Beastiary Expansion Added  
 v. 1.4    Clean up code and reformat  
+v. 1.5    Beastiary Customization
   
 Introduction  
 This script overhauls the default battle system and replaces it with a "CTB" system similar to Final Fantasy Tactics and Final Fantasy X. 
