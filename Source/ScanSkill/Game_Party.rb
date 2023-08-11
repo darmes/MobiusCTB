@@ -17,7 +17,7 @@ class Game_Party
   alias mobius_ctb_initialize initialize
   def initialize
     mobius_ctb_initialize
-    @scan_list = [1,2,3]
+    @scan_list = []
   end
 
 end
