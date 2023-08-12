@@ -1,8 +1,8 @@
 #===============================================================================
 # Mobius' Charge Turn Battle System
 # Author: Mobius XVI
-# Version: 1.4
-# Date: 25 JUN 2023
+# Version: 1.5
+# Date: 11 AUG 2023
 #===============================================================================
 #
 # Introduction:
@@ -35,6 +35,7 @@
 #    - Mobius XVI, author
 #    - TheRiotInside, for testing/feedback/suggestions
 #    - Mudkicker, for suggesting customizable turn icons
+#    - CarlosDavilla, for suggesting customizable element lists
 #
 #  License
 #    This script is licensed under the MIT license, so you can use it for both commercial and non-commercial games!
